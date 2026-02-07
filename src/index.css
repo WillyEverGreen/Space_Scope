@@ -1,0 +1,348 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* SpaceScope Design System - Cosmic Space Theme */
+
+@layer base {
+  :root {
+    /* Core Space Palette */
+    --background: 230 60% 6%;
+    --foreground: 210 40% 96%;
+
+    --card: 230 45% 10%;
+    --card-foreground: 210 40% 96%;
+
+    --popover: 230 50% 8%;
+    --popover-foreground: 210 40% 96%;
+
+    /* Brand Colors */
+    --primary: 239 84% 67%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 263 70% 50%;
+    --secondary-foreground: 210 40% 98%;
+
+    --accent: 330 81% 60%;
+    --accent-foreground: 210 40% 98%;
+
+    --muted: 230 30% 15%;
+    --muted-foreground: 215 20% 65%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    /* UI Elements */
+    --border: 230 30% 20%;
+    --input: 230 30% 15%;
+    --ring: 239 84% 67%;
+
+    --radius: 0.75rem;
+
+    /* Custom Space Colors */
+    --space-navy: 230 60% 6%;
+    --space-deep: 235 50% 4%;
+    --cosmic-glow: 239 84% 67%;
+    --nebula-purple: 263 70% 50%;
+    --aurora-pink: 330 81% 60%;
+    --star-white: 210 40% 96%;
+    --meteor-gold: 45 93% 58%;
+
+    /* Gradients (Removed) */
+    --gradient-cosmic: hsl(239 84% 67%);
+    --gradient-aurora: hsl(263 70% 50% / 0.3);
+    --gradient-space: hsl(230 45% 12%);
+
+    /* Shadows & Glows */
+    --glow-primary: 0 0 30px hsl(239 84% 67% / 0.4);
+    --glow-accent: 0 0 30px hsl(330 81% 60% / 0.4);
+    --glow-soft: 0 0 60px hsl(239 84% 67% / 0.2);
+
+    /* Sidebar */
+    --sidebar-background: 230 45% 8%;
+    --sidebar-foreground: 210 40% 96%;
+    --sidebar-primary: 239 84% 67%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 230 30% 15%;
+    --sidebar-accent-foreground: 210 40% 96%;
+    --sidebar-border: 230 30% 20%;
+    --sidebar-ring: 239 84% 67%;
+  }
+
+  .dark {
+    --background: 230 60% 6%;
+    --foreground: 210 40% 96%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+    background: hsl(var(--space-navy));
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading font-bold tracking-tight;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--space-deep));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--cosmic-glow) / 0.5);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--cosmic-glow) / 0.7);
+  }
+}
+
+@layer components {
+  /* Glassmorphism Card */
+  .glass-card {
+    @apply relative overflow-hidden rounded-2xl;
+    background: hsl(var(--card) / 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--star-white) / 0.1);
+  }
+
+  .glass-card-hover {
+    @apply glass-card transition-all duration-500;
+  }
+
+  .glass-card-hover:hover {
+    border-color: hsl(var(--cosmic-glow) / 0.3);
+    box-shadow: var(--glow-soft);
+    transform: translateY(-4px);
+  }
+
+  /* Cosmic Button Styles */
+  .btn-cosmic {
+    @apply relative inline-flex items-center justify-center px-8 py-4 font-heading font-semibold text-lg rounded-full overflow-hidden transition-all duration-300;
+    background: var(--gradient-cosmic);
+    color: hsl(var(--star-white));
+    box-shadow: var(--glow-primary);
+  }
+
+  .btn-cosmic:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 0 50px hsl(var(--cosmic-glow) / 0.6);
+  }
+
+  .btn-cosmic::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      45deg,
+      transparent 40%,
+      hsl(var(--star-white) / 0.2) 50%,
+      transparent 60%
+    );
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+  }
+
+  .btn-cosmic:hover::before {
+    transform: translateX(100%);
+  }
+
+  .btn-ghost-cosmic {
+    @apply relative inline-flex items-center justify-center px-8 py-4 font-heading font-semibold text-lg rounded-full transition-all duration-300;
+    background: transparent;
+    color: hsl(var(--star-white));
+    border: 1px solid hsl(var(--star-white) / 0.3);
+  }
+
+  .btn-ghost-cosmic:hover {
+    border-color: hsl(var(--cosmic-glow));
+    background: hsl(var(--cosmic-glow) / 0.1);
+    box-shadow: var(--glow-soft);
+  }
+
+  /* Text Gradient (Removed) */
+  .text-gradient {
+    @apply text-cosmic-glow;
+  }
+
+  /* Section Styles */
+  .section-cosmic {
+    @apply relative min-h-screen flex items-center justify-center overflow-hidden;
+  }
+
+  /* Star Field Background */
+  .starfield {
+    @apply fixed inset-0 pointer-events-none;
+    background-image:
+      radial-gradient(
+        2px 2px at 20px 30px,
+        hsl(var(--star-white) / 0.8),
+        transparent
+      ),
+      radial-gradient(
+        2px 2px at 40px 70px,
+        hsl(var(--star-white) / 0.6),
+        transparent
+      ),
+      radial-gradient(
+        1px 1px at 90px 40px,
+        hsl(var(--star-white) / 0.9),
+        transparent
+      ),
+      radial-gradient(
+        2px 2px at 130px 80px,
+        hsl(var(--star-white) / 0.5),
+        transparent
+      ),
+      radial-gradient(
+        1px 1px at 160px 120px,
+        hsl(var(--star-white) / 0.7),
+        transparent
+      );
+    background-size: 200px 200px;
+    animation: twinkle 4s ease-in-out infinite alternate;
+  }
+
+  @keyframes twinkle {
+    0%,
+    100% {
+      opacity: 0.5;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  /* Floating Animation */
+  .float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  /* Glow Pulse */
+  .glow-pulse {
+    animation: glowPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes glowPulse {
+    0%,
+    100% {
+      box-shadow: var(--glow-primary);
+    }
+    50% {
+      box-shadow: 0 0 60px hsl(var(--cosmic-glow) / 0.6);
+    }
+  }
+
+  /* Orbit Animation */
+  .orbit {
+    animation: orbit 20s linear infinite;
+  }
+
+  @keyframes orbit {
+    from {
+      transform: rotate(0deg) translateX(150px) rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg) translateX(150px) rotate(-360deg);
+    }
+  }
+
+  /* Meteor Animation */
+  .meteor {
+    animation: meteor 3s linear infinite;
+  }
+
+  @keyframes meteor {
+    0% {
+      transform: translateX(0) translateY(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(-300px) translateY(300px);
+      opacity: 0;
+    }
+  }
+
+  /* Aurora Effect (Simplified) */
+  .aurora {
+    @apply absolute inset-0 pointer-events-none opacity-30;
+    background: hsl(var(--nebula-purple) / 0.1);
+    filter: blur(60px);
+    animation: aurora 8s ease-in-out infinite alternate;
+  }
+
+  @keyframes aurora {
+    0% {
+      transform: translateY(-10%) scale(1);
+    }
+    100% {
+      transform: translateY(10%) scale(1.1);
+    }
+  }
+
+  /* Noise Grain Overlay */
+  .noise-overlay {
+    @apply fixed inset-0 pointer-events-none z-50 opacity-[0.015] mix-blend-overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+
+  /* Vignette Effect (Simplified) */
+  .vignette {
+    @apply fixed inset-0 pointer-events-none;
+    background: transparent;
+  }
+}
+
+@layer utilities {
+  .text-shadow-glow {
+    text-shadow: 0 0 30px hsl(var(--cosmic-glow) / 0.5);
+  }
+
+  .border-glow {
+    border: 1px solid hsl(var(--cosmic-glow) / 0.3);
+    box-shadow: inset 0 0 20px hsl(var(--cosmic-glow) / 0.1);
+  }
+
+  /* Hide scrollbar while keeping functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
