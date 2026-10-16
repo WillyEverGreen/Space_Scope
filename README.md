@@ -4,6 +4,22 @@
 
 ![SpaceScope](public/SpaceScope.png)
 
+**Live demo: https://space-scope-lqli.vercel.app**
+
+## Screenshots
+
+**Landing page**
+
+![Landing page](docs/screenshots/space-scope-home.png)
+
+**AR sky tracking**
+
+![AR sky tracking](docs/screenshots/space-scope-2.png)
+
+**Mobile view**
+
+![Mobile view](docs/screenshots/space-scope-mobile.png)
+
 ## ✨ Features
 
 ### 🚀 Real-Time Space Data
