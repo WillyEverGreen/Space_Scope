@@ -155,4 +155,4 @@ Example (Vercel):
 2. Create a new project in Vercel and link your repository.
 3. Set the build command to `npm run build` and the output directory to `dist`.
 
-Netlify works similarly—connect the repo and use the same build settings.
+Netlify works similarly, connect the repo and use the same build settings.
