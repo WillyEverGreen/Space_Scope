@@ -1,24 +1,18 @@
-# 🌌 SpaceScope
+<div align="center">
 
-**Your Personal Window to the Cosmos** - Track satellites, predict cosmic events, and explore space in real-time with stunning AR visualizations.
+<img src="public/SpaceScope.png" width="110" alt="SpaceScope logo" />
 
-![SpaceScope](public/SpaceScope.png)
+# SpaceScope
 
-**Live demo: https://space-scope-lqli.vercel.app**
+**Real-time satellite tracking, celestial telemetry and an interactive astronomical visualizer.**
 
-## Screenshots
+<a href="https://space-scope-lqli.vercel.app"><img src="https://img.shields.io/badge/Live_Demo-Open_the_app-2ea44f?style=for-the-badge" alt="Live demo" /></a>
 
-**Landing page**
+<br/>
 
-![Landing page](docs/screenshots/space-scope-home.png)
+<img src="docs/screenshot.png" width="860" alt="SpaceScope screenshot" />
 
-**AR sky tracking**
-
-![AR sky tracking](docs/screenshots/space-scope-2.png)
-
-**Mobile view**
-
-![Mobile view](docs/screenshots/space-scope-mobile.png)
+</div>
 
 ## ✨ Features
 
