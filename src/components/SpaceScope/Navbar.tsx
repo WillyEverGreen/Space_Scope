@@ -79,7 +79,7 @@ const Navbar = () => {
       >
         <a href="#top" className="flex items-center gap-2.5 pr-4" aria-label="SpaceScope home">
           <img src="/SpaceScope.png" alt="" className="h-9 w-9 rounded-full object-cover" />
-          <span className="font-heading text-lg font-bold tracking-tight text-[var(--l-cream)]">SpaceScope</span>
+          <span className="font-heading text-lg font-bold tracking-tight text-(--l-cream)">SpaceScope</span>
         </a>
 
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
@@ -90,7 +90,7 @@ const Navbar = () => {
               className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                 active === item.href
                   ? "bg-white/15 text-white"
-                  : "text-[var(--l-mist)]/70 hover:bg-white/10 hover:text-white"
+                  : " hover:bg-white/10 hover:text-white"
               }`}
             >
               {item.label}
@@ -101,10 +101,10 @@ const Navbar = () => {
         <div className="flex items-center gap-2">
           <Link
             to="/dashboard"
-            className="l-btn hidden items-center gap-2 bg-[var(--l-cream)] py-2.5 pl-5 pr-2.5 text-sm text-[var(--l-ink)] sm:inline-flex"
+            className="l-btn hidden items-center gap-2 bg-(--l-cream) py-2.5 pl-5 pr-2.5 text-sm text-(--l-ink) sm:inline-flex"
           >
             Open Dashboard
-            <span className="grid h-7 w-7 place-items-center rounded-full bg-[var(--l-ink)] text-[var(--l-cream)]">
+            <span className="grid h-7 w-7 place-items-center rounded-full bg-(--l-ink) text-(--l-cream)">
               <ArrowUpRight className="h-4 w-4" />
             </span>
           </Link>
@@ -122,7 +122,7 @@ const Navbar = () => {
       {open && (
         <div
           ref={menuRef}
-          className="fixed inset-0 -z-10 flex flex-col justify-center bg-[var(--l-night)] px-8 lg:hidden"
+          className="fixed inset-0 -z-10 flex flex-col justify-center bg-(--l-night) px-8 lg:hidden"
           style={{ background: "radial-gradient(120% 80% at 80% 0%, #3b2377 0%, #150b33 55%, #0c0620 100%)" }}
         >
           <ul className="space-y-2">
@@ -131,7 +131,7 @@ const Navbar = () => {
                 <a
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className="block border-b border-white/10 py-4 font-heading text-4xl font-bold text-[var(--l-cream)]"
+                  className="block border-b border-white/10 py-4 font-heading text-4xl font-bold text-(--l-cream)"
                 >
                   {item.label}
                 </a>

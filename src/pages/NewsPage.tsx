@@ -78,13 +78,13 @@ const NewsPage = () => {
               placeholder="Search news..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 rounded-xl bg-star-white/10 border border-star-white/10 focus:border-cosmic-glow focus:outline-none transition-colors text-star-white placeholder:text-muted-foreground"
+              className="w-full pl-12 pr-4 py-3 rounded-xl bg-star-white/10 border border-star-white/10 focus:border-cosmic-glow focus:outline-hidden transition-colors text-star-white placeholder:text-muted-foreground"
             />
           </div>
 
           {/* Category Filter */}
           <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
-            <Filter className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+            <Filter className="w-5 h-5 text-muted-foreground shrink-0" />
             {categories.map((category) => (
               <button
                 key={category}

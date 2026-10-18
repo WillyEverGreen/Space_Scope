@@ -154,7 +154,7 @@ const APODPage = () => {
                 />
                 <button
                   onClick={() => setIsFullscreen(true)}
-                  className="absolute bottom-4 right-4 p-3 rounded-xl bg-space-navy/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-space-navy"
+                  className="absolute bottom-4 right-4 p-3 rounded-xl bg-space-navy/80 backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-space-navy"
                 >
                   <Expand className="w-5 h-5" />
                 </button>
@@ -200,7 +200,7 @@ const APODPage = () => {
               href={apod.hdurl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-gradient-to-r from-cosmic-glow to-nebula-purple text-star-white font-semibold hover:opacity-90 transition-opacity"
+              className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-linear-to-r from-cosmic-glow to-nebula-purple text-star-white font-semibold hover:opacity-90 transition-opacity"
             >
               <ExternalLink className="w-4 h-4" />
               View HD Image
@@ -246,11 +246,11 @@ const APODPage = () => {
               />
               <button
                 onClick={() => setIsFullscreen(false)}
-                className="absolute top-4 right-4 p-3 rounded-xl bg-space-navy/80 backdrop-blur-sm hover:bg-space-navy transition-colors"
+                className="absolute top-4 right-4 p-3 rounded-xl bg-space-navy/80 backdrop-blur-xs hover:bg-space-navy transition-colors"
               >
                 <X className="w-6 h-6" />
               </button>
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-space-navy/90 to-transparent rounded-b-xl">
+              <div className="absolute bottom-0 left-0 right-0 p-4 bg-linear-to-t from-space-navy/90 to-transparent rounded-b-xl">
                 <h3 className="font-heading text-xl text-star-white">{apod.title}</h3>
                 {apod.copyright && (
                   <p className="text-sm text-star-white/70 mt-1">© {apod.copyright}</p>

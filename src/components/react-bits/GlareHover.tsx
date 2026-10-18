@@ -70,7 +70,7 @@ const RIM_MASK: CSSProperties = {
 };
 
 const ROOT = 'relative isolate inline-grid place-items-center overflow-hidden border border-solid align-top';
-const GLARE = 'pointer-events-none absolute inset-0 z-[2] rounded-[inherit] opacity-0';
+const GLARE = 'pointer-events-none absolute inset-0 z-2 rounded-[inherit] opacity-0';
 const BAND = 'absolute left-1/2 top-1/2 will-change-transform';
 const RIM = 'absolute inset-0 rounded-[inherit] p-px';
 

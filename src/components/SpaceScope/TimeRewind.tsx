@@ -163,14 +163,14 @@ const TimeRewind = () => {
             {/* HUD */}
             <div className="pointer-events-none absolute left-3 top-3 flex flex-wrap gap-2 sm:left-5 sm:top-5">
               <span className="l-glass-dark rounded-full px-3.5 py-1.5 text-xs font-semibold">{fmtClock(t)} local</span>
-              <span className={`rounded-full px-3.5 py-1.5 text-xs font-semibold ${sunlit ? "bg-[var(--l-gold)] text-[var(--l-ink)]" : "bg-[var(--l-ink)] text-[var(--l-lilac)]"}`}>
+              <span className={`rounded-full px-3.5 py-1.5 text-xs font-semibold ${sunlit ? "bg-(--l-gold) text-(--l-ink)" : "bg-(--l-ink) text-(--l-lilac)"}`}>
                 {sunlit ? "Sunlit" : "In Earth's shadow"}
               </span>
-              {overhead && <span className="rounded-full bg-[var(--l-pink)] px-3.5 py-1.5 text-xs font-bold text-[var(--l-ink)]">Passing over you</span>}
+              {overhead && <span className="rounded-full bg-(--l-pink) px-3.5 py-1.5 text-xs font-bold text-(--l-ink)">Passing over you</span>}
             </div>
-            <div className="pointer-events-none absolute bottom-3 right-3 hidden gap-6 rounded-2xl bg-black/30 px-4 py-2 text-xs backdrop-blur sm:flex">
-              <span><span className="text-[var(--l-mist)]/50">LAT </span><b className="font-heading">{pos.lat.toFixed(1)}°</b></span>
-              <span><span className="text-[var(--l-mist)]/50">LON </span><b className="font-heading">{pos.lon.toFixed(1)}°</b></span>
+            <div className="pointer-events-none absolute bottom-3 right-3 hidden gap-6 rounded-2xl bg-black/30 px-4 py-2 text-xs backdrop-blur-sm sm:flex">
+              <span><span className="">LAT </span><b className="font-heading">{pos.lat.toFixed(1)}°</b></span>
+              <span><span className="">LON </span><b className="font-heading">{pos.lon.toFixed(1)}°</b></span>
             </div>
           </div>
 
@@ -179,7 +179,7 @@ const TimeRewind = () => {
             <div className="flex items-center gap-2">
               <button
                 onClick={togglePlay}
-                className="grid h-12 w-12 place-items-center rounded-full bg-[var(--l-cream)] text-[var(--l-ink)] transition-transform hover:scale-105"
+                className="grid h-12 w-12 place-items-center rounded-full bg-(--l-cream) text-(--l-ink) transition-transform hover:scale-105"
                 aria-label={playing ? "Pause replay" : "Play replay"}
               >
                 {playing ? <Pause className="h-5 w-5 fill-current" /> : <Play className="h-5 w-5 translate-x-px fill-current" />}
@@ -208,14 +208,14 @@ const TimeRewind = () => {
                 style={{ ["--p" as string]: `${pct}%` }}
                 aria-label="Time offset in minutes"
               />
-              <div className="mt-3 flex justify-between text-xs text-[var(--l-mist)]/50">
+              <div className="mt-3 flex justify-between text-xs">
                 <span>−90 min</span>
                 <span>Now</span>
                 <span>+90 min</span>
               </div>
             </div>
-            <div className="flex min-w-[8.5rem] items-center gap-2 rounded-full bg-white/10 px-4 py-2.5 font-heading text-sm font-semibold">
-              <History className="h-4 w-4 text-[var(--l-pink)]" />
+            <div className="flex min-w-34 items-center gap-2 rounded-full bg-white/10 px-4 py-2.5 font-heading text-sm font-semibold">
+              <History className="h-4 w-4 text-(--l-pink)" />
               {label}
             </div>
           </div>

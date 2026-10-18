@@ -108,7 +108,7 @@ const MissionsPage = () => {
               onClick={() => setExpandedMission(isExpanded ? null : mission.id)}
             >
               <div className="flex items-start gap-4">
-                <div className={`w-14 h-14 rounded-xl ${statusColor.split(' ')[0]} flex items-center justify-center flex-shrink-0`}>
+                <div className={`w-14 h-14 rounded-xl ${statusColor.split(' ')[0]} flex items-center justify-center shrink-0`}>
                   <Icon className={`w-7 h-7 ${statusColor.split(' ')[1]}`} />
                 </div>
                 
@@ -164,7 +164,7 @@ const MissionsPage = () => {
                           <ul className="space-y-2">
                             {mission.achievements.map((achievement, i) => (
                               <li key={i} className="flex items-start gap-2 text-sm text-star-white/70">
-                                <ChevronRight className="w-4 h-4 text-cosmic-glow flex-shrink-0 mt-0.5" />
+                                <ChevronRight className="w-4 h-4 text-cosmic-glow shrink-0 mt-0.5" />
                                 {achievement}
                               </li>
                             ))}

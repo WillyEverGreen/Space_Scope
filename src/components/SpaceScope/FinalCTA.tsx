@@ -54,14 +54,14 @@ const FinalCTA = () => {
 
   return (
     <section ref={root} className="relative z-10 overflow-hidden pb-0 pt-28 md:pt-44">
-      <div className="pointer-events-none absolute inset-0 opacity-70 [mask-image:linear-gradient(180deg,transparent,#000_35%,#000_75%,transparent)]" aria-hidden="true">
+      <div className="pointer-events-none absolute inset-0 opacity-70 mask-[linear-gradient(180deg,transparent,#000_35%,#000_75%,transparent)]" aria-hidden="true">
         <Aurora colorStops={["#8b6bdc", "#ff8fb8", "#ffb48f"]} amplitude={0.9} blend={0.6} speed={0.6} paused={!visible} mouseInteraction={false} />
       </div>
 
       {/* Rocket */}
       <div data-launch className="pointer-events-none absolute bottom-40 left-[12%] hidden w-14 md:block" aria-hidden="true">
         <Rocket className="relative z-10 w-full" />
-        <div data-trail className="absolute left-1/2 top-[88%] h-72 w-1.5 -translate-x-1/2 rounded-full bg-gradient-to-b from-[var(--l-peach)]/70 to-transparent" />
+        <div data-trail className="absolute left-1/2 top-[88%] h-72 w-1.5 -translate-x-1/2 rounded-full bg-linear-to-b to-transparent" />
       </div>
 
       <div className="relative mx-auto max-w-4xl px-6 text-center">
@@ -79,16 +79,16 @@ const FinalCTA = () => {
               <span className="l-btn-dot"><ArrowUpRight className="h-5 w-5" /></span>
             </Link>
           </Magnet>
-          <Link to="/dashboard/iss" className="l-btn rounded-full border border-white/25 px-7 py-3.5 text-[var(--l-cream)] hover:bg-white/10">
+          <Link to="/dashboard/iss" className="l-btn rounded-full border border-white/25 px-7 py-3.5 text-(--l-cream) hover:bg-white/10">
             Track the ISS
           </Link>
         </div>
       </div>
 
       {/* Horizon planet */}
-      <div data-horizon className="pointer-events-none relative mx-auto mt-16 h-[17rem] w-full overflow-hidden md:h-[26rem]" aria-hidden="true">
+      <div data-horizon className="pointer-events-none relative mx-auto mt-16 h-68 w-full overflow-hidden md:h-104" aria-hidden="true">
         <Planet variant="ember" ring className="absolute left-1/2 top-0 w-[min(150vw,1300px)] max-w-none -translate-x-1/2" />
-        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-b from-transparent to-[var(--l-night)]" />
+        <div className="absolute inset-x-0 bottom-0 h-28 bg-linear-to-b from-transparent to-(--l-night)" />
       </div>
     </section>
   );

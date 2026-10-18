@@ -10,8 +10,8 @@ const Manifesto = () => (
         mode="scrub"
         enableBlur
         baseOpacity={0.12}
-        containerClassName="!my-0"
-        textClassName="font-heading !font-semibold tracking-tight !text-[clamp(1.9rem,4.6vw,3.9rem)] !leading-[1.18] text-[var(--l-cream)]"
+        containerClassName="my-0!"
+        textClassName="font-heading font-semibold! tracking-tight text-[clamp(1.9rem,4.6vw,3.9rem)]! leading-[1.18]! text-(--l-cream)"
       >
         Every satellite, every storm on the Sun and every pass of the station is already up there. SpaceScope makes it readable, live and one tap away.
       </ScrollReveal>

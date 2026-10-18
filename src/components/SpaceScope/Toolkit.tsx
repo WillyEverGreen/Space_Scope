@@ -81,13 +81,13 @@ const Toolkit = () => {
           {tools.map((t, i) => (
             <li key={t.title} data-tool className="l-rule">
               <Link to={t.to} className="group grid grid-cols-[auto_1fr_auto] items-start gap-x-5 py-7 transition-[padding] duration-500 hover:pl-3 sm:gap-x-8">
-                <span className="pt-1.5 font-heading text-sm font-medium tabular-nums text-[var(--l-mist)]/40">0{i + 1}</span>
+                <span className="pt-1.5 font-heading text-sm font-medium tabular-nums">0{i + 1}</span>
                 <div>
                   <h3 className="font-heading text-2xl font-semibold md:text-3xl">{t.title}</h3>
-                  <p className="mt-2 max-w-md text-[0.95rem] leading-relaxed text-[var(--l-mist)]/60">{t.body}</p>
-                  <p className="mt-3 text-xs text-[var(--l-mist)]/40">{t.source}</p>
+                  <p className="mt-2 max-w-md text-[0.95rem] leading-relaxed">{t.body}</p>
+                  <p className="mt-3 text-xs">{t.source}</p>
                 </div>
-                <span className="mt-1 grid h-11 w-11 place-items-center rounded-full border border-white/20 text-[var(--l-cream)] transition-all duration-500 group-hover:border-[var(--l-cream)] group-hover:bg-[var(--l-cream)] group-hover:text-[var(--l-ink)]">
+                <span className="mt-1 grid h-11 w-11 place-items-center rounded-full border border-white/20 text-(--l-cream) transition-all duration-500 group-hover:border-(--l-cream) group-hover:bg-(--l-cream) group-hover:text-(--l-ink)">
                   <ArrowUpRight className="h-5 w-5 transition-transform duration-500 group-hover:rotate-45" />
                 </span>
               </Link>

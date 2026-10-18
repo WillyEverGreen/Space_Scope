@@ -26,28 +26,28 @@ const CardShell = ({ className, title, body, cta, children, layout }: CardShellP
     borderColor="transparent"
     glareColor="#c9b6ff"
     glareOpacity={0.2}
-    className={`!block !border-0 ${className}`}
+    className={`block! border-0! ${className}`}
   >
     <article
       data-lcard
-      className={`l-card group flex h-full w-full flex-col [transform-style:preserve-3d] will-change-transform ${
+      className={`l-card group flex h-full w-full flex-col transform-3d will-change-transform ${
         layout === "split" ? "md:flex-row" : ""
       }`}
     >
     <div className={`relative z-10 flex flex-col p-7 md:p-8 ${layout === "split" ? "md:w-[46%]" : ""}`}>
       <h3 className="font-heading text-2xl font-bold md:text-[1.75rem]">{title}</h3>
-      <p className="mt-3 max-w-xs text-[0.95rem] leading-relaxed text-[var(--l-mist)]/65">{body}</p>
+      <p className="mt-3 max-w-xs text-[0.95rem] leading-relaxed">{body}</p>
       {cta && (
         <Link
           to="/dashboard"
-          className="mt-6 inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-[var(--l-cream)] md:mt-auto md:pt-8"
+          className="mt-6 inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-(--l-cream) md:mt-auto md:pt-8"
         >
           {cta}
           <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
         </Link>
       )}
     </div>
-    <div className={`relative flex-1 ${layout === "split" ? "min-h-[15rem]" : ""}`}>{children}</div>
+    <div className={`relative flex-1 ${layout === "split" ? "min-h-60" : ""}`}>{children}</div>
     </article>
   </GlareHover>
 );
@@ -121,21 +121,21 @@ const QuizPreview = () => {
   return (
     <div className="flex h-full items-end p-5 pt-0">
       <div className="w-full rounded-2xl border border-white/10 bg-[#150b33]/70 p-4">
-        <div className="mb-3 flex items-center justify-between text-[0.7rem] font-medium text-[var(--l-mist)]/50">
+        <div className="mb-3 flex items-center justify-between text-[0.7rem] font-medium">
           <span>{done ? "Finished" : `Question ${idx + 1} of ${questions.length}`}</span>
           <span>Score {score}</span>
         </div>
         <div className="mb-4 h-1 overflow-hidden rounded-full bg-white/10">
-          <div className="h-full rounded-full bg-[var(--l-lilac)] transition-[width] duration-500" style={{ width: `${(Math.min(idx, questions.length) / questions.length) * 100}%` }} />
+          <div className="h-full rounded-full bg-(--l-lilac) transition-[width] duration-500" style={{ width: `${(Math.min(idx, questions.length) / questions.length) * 100}%` }} />
         </div>
 
         {done ? (
           <div ref={body} className="py-3 text-center">
             <div className="font-heading text-4xl font-bold">{score}/{questions.length}</div>
-            <p className="mt-1 text-sm text-[var(--l-mist)]/65">
+            <p className="mt-1 text-sm">
               {score === questions.length ? "Flawless. Mission control approves." : score >= 3 ? "Solid orbit. Try again for a perfect run." : "Plenty to explore. Have another go."}
             </p>
-            <button onClick={restart} className="mt-4 rounded-full bg-[var(--l-cream)] px-5 py-2 text-sm font-semibold text-[var(--l-ink)] transition-transform hover:-translate-y-0.5">
+            <button onClick={restart} className="mt-4 rounded-full bg-(--l-cream) px-5 py-2 text-sm font-semibold text-(--l-ink) transition-transform hover:-translate-y-0.5">
               Play again
             </button>
           </div>
@@ -155,8 +155,8 @@ const QuizPreview = () => {
                         isAnswer
                           ? "border-[#5cf2b0]/40 bg-[#5cf2b0]/10 text-[#5cf2b0]"
                           : isWrong
-                            ? "border-[var(--l-pink)]/40 bg-[var(--l-pink)]/10 text-[var(--l-pink)]"
-                            : "border-white/10 text-[var(--l-mist)]/75 hover:border-white/30 hover:bg-white/5"
+                            ? " text-(--l-pink)"
+                            : "border-white/10 hover:border-white/30 hover:bg-white/5"
                       }`}
                     >
                       <span className="flex items-center gap-2.5">
@@ -170,7 +170,7 @@ const QuizPreview = () => {
                 );
               })}
             </ul>
-            <p className="mt-3 min-h-[2rem] text-xs leading-snug text-[var(--l-mist)]/55">{picked !== null ? q.note : " "}</p>
+            <p className="mt-3 min-h-8 text-xs leading-snug">{picked !== null ? q.note : " "}</p>
           </div>
         )}
       </div>
@@ -206,7 +206,7 @@ const ScaleGuide = () => (
           </g>
         ))}
       </svg>
-      <div className="mt-1 flex justify-between text-[0.7rem] text-[var(--l-mist)]/45">
+      <div className="mt-1 flex justify-between text-[0.7rem]">
         <span>Sun</span>
         <span>Planets, relative size</span>
       </div>
@@ -222,8 +222,8 @@ const LiveDataPreview = () => (
     <div className="grid w-full gap-3 sm:grid-cols-2">
       <div className="rounded-2xl border border-white/10 bg-[#150b33]/70 p-4">
         <div className="flex items-baseline justify-between">
-          <span className="text-[0.7rem] font-medium text-[var(--l-mist)]/50">Kp index</span>
-          <span className="rounded-full bg-[var(--l-gold)]/15 px-2 py-0.5 text-[0.65rem] font-semibold text-[var(--l-gold)]">Unsettled</span>
+          <span className="text-[0.7rem] font-medium">Kp index</span>
+          <span className="rounded-full px-2 py-0.5 text-[0.65rem] font-semibold text-(--l-gold)">Unsettled</span>
         </div>
         <div className="mt-1 font-heading text-3xl font-bold">3.0</div>
         <div className="mt-3 flex h-12 items-end gap-1.5">
@@ -239,8 +239,8 @@ const LiveDataPreview = () => (
       </div>
       <div className="rounded-2xl border border-white/10 bg-[#150b33]/70 p-4">
         <div className="flex items-baseline justify-between">
-          <span className="text-[0.7rem] font-medium text-[var(--l-mist)]/50">X-ray flux</span>
-          <span className="text-[0.65rem] font-semibold text-[var(--l-mist)]/60">GOES</span>
+          <span className="text-[0.7rem] font-medium">X-ray flux</span>
+          <span className="text-[0.65rem] font-semibold">GOES</span>
         </div>
         <div className="mt-1 font-heading text-3xl font-bold">B4.2</div>
         <svg viewBox="0 0 270 64" className="mt-3 block h-12 w-full" preserveAspectRatio="none" aria-hidden="true">
@@ -301,7 +301,7 @@ const LearningZone = () => {
           lead="From students to lifelong stargazers, learn at your own pace with bite-sized lessons, quizzes and visual guides."
         />
 
-        <div data-lgrid className="mt-14 grid gap-5 [perspective:1400px] md:grid-cols-6 md:auto-rows-[minmax(22rem,auto)]">
+        <div data-lgrid className="mt-14 grid gap-5 perspective-[1400px] md:grid-cols-6 md:auto-rows-[minmax(22rem,auto)]">
           <CardShell layout="split" className="md:col-span-4" title="Space 101" body="Start with the fundamentals: orbits, light, gravity and why the sky appears to move." cta="Start learning">
             <SpaceBasics />
           </CardShell>

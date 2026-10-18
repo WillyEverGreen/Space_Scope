@@ -336,7 +336,7 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
     <h2 ref={containerRef} className={`my-5 ${containerClassName}`} aria-label={text ?? undefined}>
       <span
         ref={textRef}
-        className={`block text-[clamp(1.6rem,4vw,3rem)] leading-[1.5] font-semibold ${textClassName}`}
+        className={`block text-[clamp(1.6rem,4vw,3rem)] leading-normal font-semibold ${textClassName}`}
         aria-hidden={text === null ? undefined : true}
       >
         {splitText ?? children}

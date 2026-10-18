@@ -1,0 +1,16 @@
+/*
+ * Tailwind CSS v3 font-size line heights.
+ * v4 expresses these as unitless ratios, which scale when a utility such as
+ * `text-[1.75rem]` overrides only the font size. v3 used fixed rem values, so
+ * keep them to leave typography unchanged.
+ */
+@theme {
+  --text-xs--line-height: 1rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl--line-height: 1.75rem;
+  --text-2xl--line-height: 2rem;
+  --text-3xl--line-height: 2.25rem;
+  --text-4xl--line-height: 2.5rem;
+}

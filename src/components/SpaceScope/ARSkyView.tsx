@@ -105,16 +105,16 @@ const ARSkyView = () => {
             {features.map((f) => (
               <div key={f.title} data-feat className="l-rule py-6">
                 <dt className="font-heading text-lg font-semibold">{f.title}</dt>
-                <dd className="mt-2 text-sm leading-relaxed text-[var(--l-mist)]/60">{f.body}</dd>
+                <dd className="mt-2 text-sm leading-relaxed">{f.body}</dd>
               </div>
             ))}
           </dl>
         </div>
 
         {/* Phone */}
-        <div data-phone-wrap className="relative mx-auto w-full max-w-[340px] [perspective:1400px]">
+        <div data-phone-wrap className="relative mx-auto w-full max-w-[340px] perspective-[1400px]">
           <div className="absolute -inset-10 rounded-full bg-[radial-gradient(closest-side,rgba(139,107,220,0.45),transparent)] blur-2xl" aria-hidden="true" />
-          <div data-phone className="relative rounded-[3rem] border border-white/20 bg-[#1a1030] p-3 shadow-[0_50px_100px_-30px_rgba(139,107,220,0.7)] [transform-style:preserve-3d]">
+          <div data-phone className="relative rounded-[3rem] border border-white/20 bg-[#1a1030] p-3 shadow-[0_50px_100px_-30px_rgba(139,107,220,0.7)] transform-3d">
             <div className="absolute left-1/2 top-5 z-20 h-6 w-24 -translate-x-1/2 rounded-full bg-black" />
             <svg viewBox="0 0 300 620" className="block w-full rounded-[2.4rem]" role="img" aria-label="Phone screen showing satellites labelled in the night sky">
               <defs>
@@ -166,12 +166,12 @@ const ARSkyView = () => {
           </div>
 
           <div data-chip className="l-glass-dark absolute -left-6 top-24 hidden rounded-2xl px-4 py-3 text-xs sm:block lg:-left-14">
-            <div className="font-semibold text-[var(--l-cream)]">Next pass</div>
-            <div className="text-[var(--l-lilac)]">ISS in 4 min 12 s</div>
+            <div className="font-semibold text-(--l-cream)">Next pass</div>
+            <div className="text-(--l-lilac)">ISS in 4 min 12 s</div>
           </div>
           <div data-chip className="l-glass-dark absolute -right-4 bottom-40 hidden rounded-2xl px-4 py-3 text-xs sm:block lg:-right-14">
-            <div className="font-semibold text-[var(--l-cream)]">Elevation</div>
-            <div className="text-[var(--l-gold)]">74° · NNE</div>
+            <div className="font-semibold text-(--l-cream)">Elevation</div>
+            <div className="text-(--l-gold)">74° · NNE</div>
           </div>
         </div>
       </div>

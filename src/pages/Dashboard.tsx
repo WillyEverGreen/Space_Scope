@@ -189,7 +189,7 @@ const Dashboard = () => {
               className="block glass-card p-6 group hover:border-cosmic-glow/30 transition-all h-full"
             >
               <div className="flex items-start gap-4">
-                <div className={`w-12 h-12 rounded-xl ${feature.color.split(' ')[0]} flex items-center justify-center flex-shrink-0`}>
+                <div className={`w-12 h-12 rounded-xl ${feature.color.split(' ')[0]} flex items-center justify-center shrink-0`}>
                   <feature.icon className={`w-6 h-6 ${feature.color.split(' ')[1]}`} />
                 </div>
                 <div className="flex-1">

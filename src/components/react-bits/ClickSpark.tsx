@@ -471,7 +471,7 @@ const ClickSpark = forwardRef<ClickSparkHandle, ClickSparkProps>(
         <span
           ref={layerRef}
           aria-hidden="true"
-          className={`pointer-events-none absolute inset-0 overflow-visible ${layer === 'back' ? 'z-[-1]' : 'z-[1]'}`}
+          className={`pointer-events-none absolute inset-0 overflow-visible ${layer === 'back' ? 'z-[-1]' : 'z-1'}`}
         />
       </div>
     );

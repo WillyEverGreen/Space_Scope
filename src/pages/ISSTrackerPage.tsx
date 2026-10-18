@@ -75,7 +75,7 @@ const ISSTrackerPage = () => {
           </div>
 
           {/* Map */}
-          <div className="relative aspect-[2/1] bg-space-deep">
+          <div className="relative aspect-2/1 bg-space-deep">
             {/* World map background */}
             <div 
               className="absolute inset-0 opacity-30"

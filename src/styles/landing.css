@@ -1,3 +1,11 @@
+@layer theme, base, components, utilities;
+
+/*
+ * Tailwind v4 emits utilities in a cascade layer, and unlayered CSS beats layered CSS.
+ * In v3 the utilities won over these classes, so keep the .l-* rules in the components
+ * layer (below utilities) to preserve that.
+ */
+
 /*
  * SpaceScope landing page theme: "Twilight Orbit"
  * Palette is lifted from the hero scene (lavender dusk, peach horizon, copper accents)
@@ -43,6 +51,7 @@
 }
 
 /* ---------- Surfaces ---------- */
+@layer components {
 
 .l-glass {
   background: var(--l-glass);
@@ -332,4 +341,6 @@ html.lenis {
 
 .lenis.lenis-stopped {
   overflow: hidden;
+}
+
 }

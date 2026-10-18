@@ -1,6 +1,421 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@import './styles/tailwind-v3-colors.css';
+@import './styles/tailwind-v3-text.css';
+
+@plugin 'tailwindcss-animate';
+
+@custom-variant dark (&:is(.dark *));
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 2rem;
+  @media (width >= --theme(--breakpoint-sm)) {
+    max-width: none;
+  }
+  @media (width >= 1400px) {
+    max-width: 1400px;
+  }
+}
+
+@theme {
+  --font-heading: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: Inter, system-ui, sans-serif;
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --color-sidebar: hsl(var(--sidebar-background));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  --color-space-navy: hsl(var(--space-navy));
+  --color-space-deep: hsl(var(--space-deep));
+
+  --color-cosmic-glow: hsl(var(--cosmic-glow));
+  --color-cosmic-purple: hsl(var(--nebula-purple));
+  --color-cosmic-pink: hsl(var(--aurora-pink));
+  --color-cosmic-gold: hsl(var(--meteor-gold));
+
+  --color-star-white: hsl(var(--star-white));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-fade-in: fade-in 0.6s ease-out forwards;
+  --animate-fade-in-up: fade-in-up 0.8s ease-out forwards;
+  --animate-scale-in: scale-in 0.5s ease-out forwards;
+  --animate-slide-in-right: slide-in-right 0.6s ease-out forwards;
+  --animate-slide-in-left: slide-in-left 0.6s ease-out forwards;
+  --animate-blur-in: blur-in 0.8s ease-out forwards;
+  --animate-glow-pulse: glow-pulse 3s ease-in-out infinite;
+  --animate-rotate-slow: rotate-slow 60s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-slow: float-slow 8s ease-in-out infinite;
+  --animate-pulse-glow: pulse-glow 3s ease-in-out infinite;
+  --animate-shooting-star: shooting-star 3s linear infinite;
+
+  --background-image-gradient-cosmic: linear-gradient(
+    135deg,
+    hsl(var(--cosmic-glow)) 0%,
+    hsl(var(--nebula-purple)) 50%,
+    hsl(var(--aurora-pink)) 100%
+  );
+  --background-image-gradient-aurora: linear-gradient(
+    180deg,
+    hsl(var(--nebula-purple) / 0.3) 0%,
+    transparent 100%
+  );
+  --background-image-gradient-radial-space: radial-gradient(
+    ellipse at center,
+    hsl(var(--card)) 0%,
+    hsl(var(--space-navy)) 70%
+  );
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes fade-in-up {
+    0% {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes scale-in {
+    0% {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  @keyframes slide-in-right {
+    0% {
+      opacity: 0;
+      transform: translateX(50px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  @keyframes slide-in-left {
+    0% {
+      opacity: 0;
+      transform: translateX(-50px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  @keyframes blur-in {
+    0% {
+      opacity: 0;
+      filter: blur(20px);
+    }
+    100% {
+      opacity: 1;
+      filter: blur(0);
+    }
+  }
+  @keyframes glow-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 30px hsl(var(--cosmic-glow) / 0.4);
+    }
+    50% {
+      box-shadow: 0 0 60px hsl(var(--cosmic-glow) / 0.6);
+    }
+  }
+  @keyframes rotate-slow {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+  @keyframes float-slow {
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-10px) rotate(2deg);
+    }
+  }
+  @keyframes pulse-glow {
+    0%,
+    100% {
+      opacity: 0.6;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+  @keyframes shooting-star {
+    0% {
+      transform: translateX(0) translateY(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(-200px) translateY(200px);
+      opacity: 0;
+    }
+  }
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility glass-card {
+  /* Glassmorphism Card */
+  @apply relative overflow-hidden rounded-2xl;
+  background: hsl(var(--card) / 0.6);
+  backdrop-filter: blur(20px);
+  border: 1px solid hsl(var(--star-white) / 0.1);
+}
+
+@utility glass-card-hover {
+  @apply glass-card transition-all duration-500;
+
+  &:hover {
+    border-color: hsl(var(--cosmic-glow) / 0.3);
+    box-shadow: var(--glow-soft);
+    transform: translateY(-4px);
+  }
+}
+
+@utility btn-cosmic {
+  /* Cosmic Button Styles */
+  @apply relative inline-flex items-center justify-center px-8 py-4 font-heading font-semibold text-lg rounded-full overflow-hidden transition-all duration-300;
+  background: var(--gradient-cosmic);
+  color: hsl(var(--star-white));
+  box-shadow: var(--glow-primary);
+
+  &:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 0 50px hsl(var(--cosmic-glow) / 0.6);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      45deg,
+      transparent 40%,
+      hsl(var(--star-white) / 0.2) 50%,
+      transparent 60%
+    );
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+  }
+
+  &:hover::before {
+    transform: translateX(100%);
+  }
+}
+
+@utility btn-ghost-cosmic {
+  @apply relative inline-flex items-center justify-center px-8 py-4 font-heading font-semibold text-lg rounded-full transition-all duration-300;
+  background: transparent;
+  color: hsl(var(--star-white));
+  border: 1px solid hsl(var(--star-white) / 0.3);
+
+  &:hover {
+    border-color: hsl(var(--cosmic-glow));
+    background: hsl(var(--cosmic-glow) / 0.1);
+    box-shadow: var(--glow-soft);
+  }
+}
+
+@utility text-gradient {
+  /* Text Gradient (Removed) */
+  @apply text-cosmic-glow;
+}
+
+@utility section-cosmic {
+  /* Section Styles */
+  @apply relative min-h-screen flex items-center justify-center overflow-hidden;
+}
+
+@utility starfield {
+  /* Star Field Background */
+  @apply fixed inset-0 pointer-events-none;
+  background-image:
+    radial-gradient(
+      2px 2px at 20px 30px,
+      hsl(var(--star-white) / 0.8),
+      transparent
+    ),
+    radial-gradient(
+      2px 2px at 40px 70px,
+      hsl(var(--star-white) / 0.6),
+      transparent
+    ),
+    radial-gradient(
+      1px 1px at 90px 40px,
+      hsl(var(--star-white) / 0.9),
+      transparent
+    ),
+    radial-gradient(
+      2px 2px at 130px 80px,
+      hsl(var(--star-white) / 0.5),
+      transparent
+    ),
+    radial-gradient(
+      1px 1px at 160px 120px,
+      hsl(var(--star-white) / 0.7),
+      transparent
+    );
+  background-size: 200px 200px;
+  animation: twinkle 4s ease-in-out infinite alternate;
+}
+
+@utility float {
+  /* Floating Animation */
+  animation: float 6s ease-in-out infinite;
+}
+
+@utility glow-pulse {
+  /* Glow Pulse */
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+@utility orbit {
+  /* Orbit Animation */
+  animation: orbit 20s linear infinite;
+}
+
+@utility meteor {
+  /* Meteor Animation */
+  animation: meteor 3s linear infinite;
+}
+
+@utility aurora {
+  /* Aurora Effect (Simplified) */
+  @apply absolute inset-0 pointer-events-none opacity-30;
+  background: hsl(var(--nebula-purple) / 0.1);
+  filter: blur(60px);
+  animation: aurora 8s ease-in-out infinite alternate;
+}
+
+@utility noise-overlay {
+  /* Noise Grain Overlay */
+  @apply fixed inset-0 pointer-events-none z-50 opacity-[0.015] mix-blend-overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+@utility vignette {
+  /* Vignette Effect (Simplified) */
+  @apply fixed inset-0 pointer-events-none;
+  background: transparent;
+}
+
+@utility text-shadow-glow {
+  text-shadow: 0 0 30px hsl(var(--cosmic-glow) / 0.5);
+}
+
+@utility border-glow {
+  border: 1px solid hsl(var(--cosmic-glow) / 0.3);
+  box-shadow: inset 0 0 20px hsl(var(--cosmic-glow) / 0.1);
+}
+
+@utility scrollbar-hide {
+  /* Hide scrollbar while keeping functionality */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
 
 /* SpaceScope Design System - Cosmic Space Theme */
 
@@ -119,111 +534,6 @@
 }
 
 @layer components {
-  /* Glassmorphism Card */
-  .glass-card {
-    @apply relative overflow-hidden rounded-2xl;
-    background: hsl(var(--card) / 0.6);
-    backdrop-filter: blur(20px);
-    border: 1px solid hsl(var(--star-white) / 0.1);
-  }
-
-  .glass-card-hover {
-    @apply glass-card transition-all duration-500;
-  }
-
-  .glass-card-hover:hover {
-    border-color: hsl(var(--cosmic-glow) / 0.3);
-    box-shadow: var(--glow-soft);
-    transform: translateY(-4px);
-  }
-
-  /* Cosmic Button Styles */
-  .btn-cosmic {
-    @apply relative inline-flex items-center justify-center px-8 py-4 font-heading font-semibold text-lg rounded-full overflow-hidden transition-all duration-300;
-    background: var(--gradient-cosmic);
-    color: hsl(var(--star-white));
-    box-shadow: var(--glow-primary);
-  }
-
-  .btn-cosmic:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 0 50px hsl(var(--cosmic-glow) / 0.6);
-  }
-
-  .btn-cosmic::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      45deg,
-      transparent 40%,
-      hsl(var(--star-white) / 0.2) 50%,
-      transparent 60%
-    );
-    transform: translateX(-100%);
-    transition: transform 0.6s ease;
-  }
-
-  .btn-cosmic:hover::before {
-    transform: translateX(100%);
-  }
-
-  .btn-ghost-cosmic {
-    @apply relative inline-flex items-center justify-center px-8 py-4 font-heading font-semibold text-lg rounded-full transition-all duration-300;
-    background: transparent;
-    color: hsl(var(--star-white));
-    border: 1px solid hsl(var(--star-white) / 0.3);
-  }
-
-  .btn-ghost-cosmic:hover {
-    border-color: hsl(var(--cosmic-glow));
-    background: hsl(var(--cosmic-glow) / 0.1);
-    box-shadow: var(--glow-soft);
-  }
-
-  /* Text Gradient (Removed) */
-  .text-gradient {
-    @apply text-cosmic-glow;
-  }
-
-  /* Section Styles */
-  .section-cosmic {
-    @apply relative min-h-screen flex items-center justify-center overflow-hidden;
-  }
-
-  /* Star Field Background */
-  .starfield {
-    @apply fixed inset-0 pointer-events-none;
-    background-image:
-      radial-gradient(
-        2px 2px at 20px 30px,
-        hsl(var(--star-white) / 0.8),
-        transparent
-      ),
-      radial-gradient(
-        2px 2px at 40px 70px,
-        hsl(var(--star-white) / 0.6),
-        transparent
-      ),
-      radial-gradient(
-        1px 1px at 90px 40px,
-        hsl(var(--star-white) / 0.9),
-        transparent
-      ),
-      radial-gradient(
-        2px 2px at 130px 80px,
-        hsl(var(--star-white) / 0.5),
-        transparent
-      ),
-      radial-gradient(
-        1px 1px at 160px 120px,
-        hsl(var(--star-white) / 0.7),
-        transparent
-      );
-    background-size: 200px 200px;
-    animation: twinkle 4s ease-in-out infinite alternate;
-  }
-
   @keyframes twinkle {
     0%,
     100% {
@@ -232,11 +542,6 @@
     50% {
       opacity: 1;
     }
-  }
-
-  /* Floating Animation */
-  .float {
-    animation: float 6s ease-in-out infinite;
   }
 
   @keyframes float {
@@ -249,11 +554,6 @@
     }
   }
 
-  /* Glow Pulse */
-  .glow-pulse {
-    animation: glowPulse 3s ease-in-out infinite;
-  }
-
   @keyframes glowPulse {
     0%,
     100% {
@@ -264,11 +564,6 @@
     }
   }
 
-  /* Orbit Animation */
-  .orbit {
-    animation: orbit 20s linear infinite;
-  }
-
   @keyframes orbit {
     from {
       transform: rotate(0deg) translateX(150px) rotate(0deg);
@@ -276,11 +571,6 @@
     to {
       transform: rotate(360deg) translateX(150px) rotate(-360deg);
     }
-  }
-
-  /* Meteor Animation */
-  .meteor {
-    animation: meteor 3s linear infinite;
   }
 
   @keyframes meteor {
@@ -294,14 +584,6 @@
     }
   }
 
-  /* Aurora Effect (Simplified) */
-  .aurora {
-    @apply absolute inset-0 pointer-events-none opacity-30;
-    background: hsl(var(--nebula-purple) / 0.1);
-    filter: blur(60px);
-    animation: aurora 8s ease-in-out infinite alternate;
-  }
-
   @keyframes aurora {
     0% {
       transform: translateY(-10%) scale(1);
@@ -310,37 +592,15 @@
       transform: translateY(10%) scale(1.1);
     }
   }
-
-  /* Noise Grain Overlay */
-  .noise-overlay {
-    @apply fixed inset-0 pointer-events-none z-50 opacity-[0.015] mix-blend-overlay;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  }
-
-  /* Vignette Effect (Simplified) */
-  .vignette {
-    @apply fixed inset-0 pointer-events-none;
-    background: transparent;
-  }
 }
 
-@layer utilities {
-  .text-shadow-glow {
-    text-shadow: 0 0 30px hsl(var(--cosmic-glow) / 0.5);
-  }
-
-  .border-glow {
-    border: 1px solid hsl(var(--cosmic-glow) / 0.3);
-    box-shadow: inset 0 0 20px hsl(var(--cosmic-glow) / 0.1);
-  }
-
-  /* Hide scrollbar while keeping functionality */
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
+/*
+  Tailwind CSS v4 preflight sets `cursor: default` on buttons; v3 used
+  `cursor: pointer`. Restore the v3 behaviour so the UI feels unchanged.
+*/
+@layer base {
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
   }
 }

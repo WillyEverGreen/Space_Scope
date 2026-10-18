@@ -59,9 +59,9 @@ const LandingHero = () => {
   }, []);
 
   return (
-    <section ref={root} id="top" className="relative h-[100svh] min-h-[680px] overflow-hidden bg-[#8d78d8]">
+    <section ref={root} id="top" className="relative h-svh min-h-[680px] overflow-hidden bg-[#8d78d8]">
       {/* Artwork */}
-      <div ref={bg} className="absolute -top-[2%] inset-x-0 h-[110%] will-change-transform">
+      <div ref={bg} className="absolute top-[-2%] inset-x-0 h-[110%] will-change-transform">
         <img
           src="/hero-scene.webp"
           alt="An astronaut relaxing in an armchair with a laptop beside a lavender lake at sunset, with a giant planet rising behind"
@@ -72,16 +72,16 @@ const LandingHero = () => {
 
       {/* Legibility veil on the text side + blend into the next section */}
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(95deg,rgba(255,244,250,0.55)_0%,rgba(255,236,248,0.22)_38%,transparent_62%)] max-md:bg-[linear-gradient(180deg,rgba(255,244,250,0.5)_0%,transparent_60%)]" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-b from-transparent to-[var(--l-dusk)]" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-linear-to-b from-transparent to-(--l-dusk)" />
 
       <div ref={content} className="relative z-10 mx-auto flex h-full max-w-6xl flex-col justify-start px-6 pb-24 pt-32 md:justify-center md:pt-28">
-        <h1 className="text-[clamp(2.9rem,7.4vw,6.4rem)] font-bold leading-[0.96] text-[var(--l-ink)]">
+        <h1 className="text-[clamp(2.9rem,7.4vw,6.4rem)] font-bold leading-[0.96] text-(--l-ink)">
           <span data-hero-line className="l-mask"><span>See the</span></span>
           <span data-hero-line className="l-mask"><span>Invisible</span></span>
           <span data-hero-line className="l-mask"><span>Universe</span></span>
         </h1>
 
-        <p data-hero-sub className="mt-7 max-w-[15rem] text-base sm:max-w-md font-medium leading-relaxed text-[var(--l-ink-soft)] md:text-lg">
+        <p data-hero-sub className="mt-7 max-w-60 text-base sm:max-w-md font-medium leading-relaxed text-(--l-ink-soft) md:text-lg">
           Track satellites, predict cosmic events and explore the night sky in real-time augmented reality.
         </p>
 
@@ -101,7 +101,7 @@ const LandingHero = () => {
         </div>
       </div>
 
-      <a data-hero-scroll href="#features" aria-label="Scroll to features" className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 text-[var(--l-ink)]/70 lg:block">
+      <a data-hero-scroll href="#features" aria-label="Scroll to features" className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 lg:block">
         <ChevronDown className="h-6 w-6" />
       </a>
     </section>

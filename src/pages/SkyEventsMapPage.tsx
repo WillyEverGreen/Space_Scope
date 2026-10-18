@@ -135,7 +135,7 @@ const LocationFinder = ({ onLocate }: { onLocate: (lat: number, lng: number) => 
   return (
     <button
       onClick={handleLocate}
-      className="absolute top-4 right-4 z-[1000] p-3 rounded-xl glass-card hover:bg-star-white/20 transition-colors"
+      className="absolute top-4 right-4 z-1000 p-3 rounded-xl glass-card hover:bg-star-white/20 transition-colors"
       title="Find my location"
     >
       <Navigation className="w-5 h-5 text-cosmic-glow" />

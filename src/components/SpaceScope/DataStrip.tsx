@@ -59,12 +59,12 @@ const DataStrip = () => {
 
   return (
     <section ref={ref} className="relative z-10 pb-10 pt-6">
-      <div className="l-marquee relative overflow-hidden border-y border-white/10 py-5 [mask-image:linear-gradient(90deg,transparent,#000_12%,#000_88%,transparent)]">
+      <div className="l-marquee relative overflow-hidden border-y border-white/10 py-5 mask-[linear-gradient(90deg,transparent,#000_12%,#000_88%,transparent)]">
         <div className="l-marquee-track">
           {[...sources, ...sources].map((s, i) => (
-            <span key={i} className="flex items-center gap-10 pr-10 font-heading text-lg font-semibold tracking-tight text-[var(--l-mist)]/55">
+            <span key={i} className="flex items-center gap-10 pr-10 font-heading text-lg font-semibold tracking-tight">
               {s}
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--l-lilac)]/50" />
+              <span className="h-1.5 w-1.5 rounded-full" />
             </span>
           ))}
         </div>
@@ -77,7 +77,7 @@ const DataStrip = () => {
               <span data-count={s.value}>0</span>
               <span className="l-grad-text">{s.suffix}</span>
             </div>
-            <div className="mt-2 text-sm text-[var(--l-mist)]/65">{s.label}</div>
+            <div className="mt-2 text-sm">{s.label}</div>
           </div>
         ))}
       </div>

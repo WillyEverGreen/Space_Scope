@@ -147,12 +147,12 @@ const InteractiveGlobe = () => {
                 <div className="flex items-baseline justify-between gap-4">
                   <div>
                     <div className="font-heading text-lg font-semibold leading-tight">{r.name}</div>
-                    <div className="mt-1 text-xs text-[var(--l-mist)]/50">{r.when} � look {r.dir}</div>
+                    <div className="mt-1 text-xs">{r.when} 쨌 look {r.dir}</div>
                   </div>
                   <span data-pct className="font-heading text-2xl font-bold tabular-nums">0%</span>
                 </div>
                 <div className="mt-3 h-px bg-white/10">
-                  <div data-bar className="h-[3px] -translate-y-px rounded-full bg-[var(--l-peach)]" />
+                  <div data-bar className="h-[3px] -translate-y-px rounded-full bg-(--l-peach)" />
                 </div>
               </div>
             ))}
@@ -199,15 +199,15 @@ const InteractiveGlobe = () => {
           </svg>
 
           {/* Telemetry */}
-          <div className="absolute -bottom-4 left-0 w-[17.5rem] rounded-2xl border border-white/15 bg-[#0c0620]/85 p-5 sm:-left-4 lg:-left-10">
-            <div className="mb-3 flex items-center gap-2 text-[0.7rem] font-semibold uppercase tracking-widest text-[var(--l-lilac)]">
+          <div className="absolute -bottom-4 left-0 w-70 rounded-2xl border border-white/15 bg-[#0c0620]/85 p-5 sm:-left-4 lg:-left-10">
+            <div className="mb-3 flex items-center gap-2 text-[0.7rem] font-semibold uppercase tracking-widest text-(--l-lilac)">
               <span className="l-live-dot" /> ISS telemetry
             </div>
             <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-              <div><dt className="text-[0.7rem] text-[var(--l-mist)]/50">Altitude</dt><dd className="font-heading text-lg font-semibold"><span ref={altRef}>408.0</span> <small className="text-xs font-normal text-[var(--l-mist)]/50">km</small></dd></div>
-              <div><dt className="text-[0.7rem] text-[var(--l-mist)]/50">Velocity</dt><dd className="font-heading text-lg font-semibold"><span ref={velRef}>7.66</span> <small className="text-xs font-normal text-[var(--l-mist)]/50">km/s</small></dd></div>
-              <div><dt className="text-[0.7rem] text-[var(--l-mist)]/50">Latitude</dt><dd className="font-heading font-semibold" ref={latRef}>0.00째 N</dd></div>
-              <div><dt className="text-[0.7rem] text-[var(--l-mist)]/50">Longitude</dt><dd className="font-heading font-semibold" ref={lonRef}>0.00째 E</dd></div>
+              <div><dt className="text-[0.7rem]">Altitude</dt><dd className="font-heading text-lg font-semibold"><span ref={altRef}>408.0</span> <small className="text-xs font-normal">km</small></dd></div>
+              <div><dt className="text-[0.7rem]">Velocity</dt><dd className="font-heading text-lg font-semibold"><span ref={velRef}>7.66</span> <small className="text-xs font-normal">km/s</small></dd></div>
+              <div><dt className="text-[0.7rem]">Latitude</dt><dd className="font-heading font-semibold" ref={latRef}>0.00째 N</dd></div>
+              <div><dt className="text-[0.7rem]">Longitude</dt><dd className="font-heading font-semibold" ref={lonRef}>0.00째 E</dd></div>
             </dl>
           </div>
         </div>

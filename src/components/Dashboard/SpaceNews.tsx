@@ -37,7 +37,7 @@ const SpaceNews = () => {
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
             <div key={i} className="flex gap-4 animate-pulse">
-              <div className="w-24 h-20 bg-star-white/10 rounded-lg flex-shrink-0" />
+              <div className="w-24 h-20 bg-star-white/10 rounded-lg shrink-0" />
               <div className="flex-1 space-y-2">
                 <div className="h-4 bg-star-white/10 rounded w-full" />
                 <div className="h-4 bg-star-white/10 rounded w-3/4" />
@@ -96,7 +96,7 @@ const SpaceNews = () => {
           >
             {/* Thumbnail */}
             {article.image_url && (
-              <div className="w-24 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-space-deep">
+              <div className="w-24 h-20 rounded-lg overflow-hidden shrink-0 bg-space-deep">
                 <img
                   src={article.image_url}
                   alt=""
@@ -129,7 +129,7 @@ const SpaceNews = () => {
             </div>
 
             {/* Arrow */}
-            <div className="flex-shrink-0 self-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="shrink-0 self-center opacity-0 group-hover:opacity-100 transition-opacity">
               <ExternalLink className="w-4 h-4 text-muted-foreground" />
             </div>
           </motion.a>

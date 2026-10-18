@@ -30,10 +30,10 @@ const columns = [
   },
 ];
 
-const linkCls = "text-sm text-[var(--l-mist)]/60 transition-colors hover:text-white";
+const linkCls = "text-sm transition-colors hover:text-white";
 
 const Footer = () => (
-  <footer className="relative z-10 overflow-hidden border-t border-white/10 bg-[var(--l-night)]">
+  <footer className="relative z-10 overflow-hidden border-t border-white/10 bg-(--l-night)">
     <div className="mx-auto max-w-6xl px-6 pb-10 pt-16">
       <div className="grid gap-12 md:grid-cols-[1.4fr_repeat(3,1fr)]">
         <div>
@@ -41,7 +41,7 @@ const Footer = () => (
             <img src="/SpaceScope.png" alt="" className="h-10 w-10 rounded-full object-cover" />
             <span className="font-heading text-xl font-bold">SpaceScope</span>
           </a>
-          <p className="mt-4 max-w-xs text-sm leading-relaxed text-[var(--l-mist)]/60">
+          <p className="mt-4 max-w-xs text-sm leading-relaxed">
             Your personal window to the cosmos. Track satellites, predict cosmic events and explore the sky in real-time AR.
           </p>
           <div className="mt-6 flex gap-2">
@@ -54,7 +54,7 @@ const Footer = () => (
                 key={label}
                 href="#"
                 aria-label={label}
-                className="grid h-10 w-10 place-items-center rounded-full border border-white/15 text-[var(--l-mist)]/70 transition-all hover:-translate-y-0.5 hover:border-[var(--l-pink)] hover:text-white"
+                className="grid h-10 w-10 place-items-center rounded-full border border-white/15 transition-all hover:-translate-y-0.5 hover:border-(--l-pink) hover:text-white"
               >
                 <Icon className="h-4 w-4" />
               </a>
@@ -64,7 +64,7 @@ const Footer = () => (
 
         {columns.map((col) => (
           <div key={col.title}>
-            <h4 className="font-heading text-sm font-semibold uppercase tracking-widest text-[var(--l-lilac)]">{col.title}</h4>
+            <h4 className="font-heading text-sm font-semibold uppercase tracking-widest text-(--l-lilac)">{col.title}</h4>
             <ul className="mt-5 space-y-3">
               {col.links.map((l) => (
                 <li key={l.label}>
@@ -80,7 +80,7 @@ const Footer = () => (
         ))}
       </div>
 
-      <div className="mt-14 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 text-xs text-[var(--l-mist)]/45 sm:flex-row">
+      <div className="mt-14 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 text-xs sm:flex-row">
         <span>© {new Date().getFullYear()} SpaceScope. Data courtesy of NASA, NOAA and ESA.</span>
         <span>Built for people who look up.</span>
       </div>

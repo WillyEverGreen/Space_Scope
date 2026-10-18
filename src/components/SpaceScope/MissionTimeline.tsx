@@ -27,9 +27,9 @@ const missions: Mission[] = [
 ];
 
 const statusStyle: Record<Status, { label: string; dot: string }> = {
-  completed: { label: "Completed", dot: "bg-[var(--l-mist)]/50" },
+  completed: { label: "Completed", dot: "" },
   active: { label: "Active", dot: "bg-[#5cf2b0]" },
-  upcoming: { label: "Upcoming", dot: "bg-[var(--l-gold)]" },
+  upcoming: { label: "Upcoming", dot: "bg-(--l-gold)" },
 };
 
 const MissionTimeline = () => {
@@ -97,20 +97,20 @@ const MissionTimeline = () => {
           {missions.map((m, i) => {
             const st = statusStyle[m.status];
             return (
-              <article key={m.id} data-mcard className="l-card flex min-h-[20rem] flex-col p-7 lg:w-[26rem] lg:shrink-0">
+              <article key={m.id} data-mcard className="l-card flex min-h-80 flex-col p-7 lg:w-104 lg:shrink-0">
                 <div className="pointer-events-none absolute -right-12 top-10 h-44 w-44 opacity-90" aria-hidden="true">
                   {m.art === "moon" ? <Moon className="h-full w-full" /> : <Planet variant={m.art} className="h-full w-full" />}
                 </div>
                 <div className="relative z-10 flex items-center justify-between">
-                  <span className="font-heading text-sm font-semibold text-[var(--l-mist)]/50">0{i + 1}</span>
-                  <span className="inline-flex items-center gap-2 text-xs font-medium text-[var(--l-mist)]/70"><span className={`h-1.5 w-1.5 rounded-full ${st.dot}`} />{st.label}</span>
+                  <span className="font-heading text-sm font-semibold">0{i + 1}</span>
+                  <span className="inline-flex items-center gap-2 text-xs font-medium"><span className={`h-1.5 w-1.5 rounded-full ${st.dot}`} />{st.label}</span>
                 </div>
                 <div className="relative mt-auto pt-16">
                   <div className="font-heading text-6xl font-bold leading-none text-transparent [-webkit-text-stroke:1px_rgba(201,182,255,0.55)]">{m.year}</div>
                   <h3 className="mt-4 font-heading text-2xl font-bold">{m.name}</h3>
-                  <p className="mt-1 text-sm text-[var(--l-lilac)]">{m.target}</p>
-                  <p className="mt-4 text-[0.95rem] text-[var(--l-cream)]/90">{m.goal}</p>
-                  <p className="mt-1.5 text-sm leading-relaxed text-[var(--l-mist)]/60">{m.impact}</p>
+                  <p className="mt-1 text-sm text-(--l-lilac)">{m.target}</p>
+                  <p className="mt-4 text-[0.95rem]">{m.goal}</p>
+                  <p className="mt-1.5 text-sm leading-relaxed">{m.impact}</p>
                 </div>
               </article>
             );
@@ -120,12 +120,12 @@ const MissionTimeline = () => {
         {/* Progress line with rocket (desktop pin only) */}
         <div className="mx-auto mt-12 hidden w-full max-w-6xl px-6 lg:block">
           <div className="relative h-1 rounded-full bg-white/10">
-            <div data-fill className="absolute inset-y-0 left-0 w-full origin-left scale-x-0 rounded-full bg-[var(--l-lilac)]" />
+            <div data-fill className="absolute inset-y-0 left-0 w-full origin-left scale-x-0 rounded-full bg-(--l-lilac)" />
             <div data-rocket className="absolute -top-5 left-0 -translate-x-1/2">
               <Rocket className="h-12 w-6 rotate-90" />
             </div>
           </div>
-          <div className="mt-4 flex justify-between text-xs font-medium text-[var(--l-mist)]/45">
+          <div className="mt-4 flex justify-between text-xs font-medium">
             <span>1969</span>
             <span>2031</span>
           </div>
