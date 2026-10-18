@@ -60,11 +60,12 @@ Visit `http://localhost:8083` to see SpaceScope in action!
 ## 🛠️ Tech Stack
 
 - **Frontend**: React 18 + TypeScript + Vite
-- **3D Graphics**: Three.js with React Three Fiber
+- **Motion**: GSAP (ScrollTrigger, MotionPath) with Lenis smooth scrolling
+- **Interactive components**: React Bits (installed through the shadcn registry, see `src/components/react-bits`)
 - **UI Components**: Radix UI + Tailwind CSS
 - **State Management**: TanStack React Query
 - **Routing**: React Router DOM
-- **Animations**: Framer Motion
+- **Dashboard animations**: Framer Motion
 
 ## 📁 Project Structure
 

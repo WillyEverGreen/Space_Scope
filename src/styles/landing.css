@@ -1,0 +1,335 @@
+/*
+ * SpaceScope landing page theme: "Twilight Orbit"
+ * Palette is lifted from the hero scene (lavender dusk, peach horizon, copper accents)
+ * and scoped to .landing so the dashboard theme in index.css is untouched.
+ */
+
+.landing {
+  --l-ink: #1a1030;
+  --l-ink-soft: #3a2a63;
+  --l-night: #0c0620;
+  --l-night-2: #150b33;
+  --l-dusk: #3b2377;
+  --l-violet: #8b6bdc;
+  --l-lilac: #c9b6ff;
+  --l-mist: #efe6ff;
+  --l-pink: #ff8fb8;
+  --l-peach: #ffb48f;
+  --l-gold: #ffd9a0;
+  --l-copper: #c8794b;
+  --l-cream: #fff5ee;
+
+  --l-glass: rgba(255, 255, 255, 0.1);
+  --l-glass-strong: rgba(255, 255, 255, 0.16);
+  --l-line: rgba(255, 255, 255, 0.14);
+  --l-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  font-family: "Inter", system-ui, sans-serif;
+  color: var(--l-cream);
+  background: var(--l-night);
+}
+
+.landing h1,
+.landing h2,
+.landing h3,
+.landing h4 {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  letter-spacing: -0.03em;
+}
+
+.landing ::selection {
+  background: var(--l-pink);
+  color: var(--l-ink);
+}
+
+/* ---------- Surfaces ---------- */
+
+.l-glass {
+  background: var(--l-glass);
+  border: 1px solid var(--l-line);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+}
+
+.l-glass-dark {
+  background: rgba(22, 11, 52, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+}
+
+.l-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: border-color 0.5s var(--l-ease), background 0.5s var(--l-ease);
+}
+
+.l-card:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Film grain over the whole page */
+.l-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Hairline list rows */
+.l-rule {
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+/* ---------- Buttons ---------- */
+
+.l-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 999px;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  transition:
+    transform 0.4s var(--l-ease),
+    box-shadow 0.4s var(--l-ease),
+    background 0.3s ease;
+}
+
+.l-btn:hover {
+  transform: translateY(-2px);
+}
+
+.l-btn-dark {
+  padding: 0.5rem 0.5rem 0.5rem 1.6rem;
+  background: var(--l-ink);
+  color: var(--l-cream);
+  box-shadow: 0 10px 30px -10px rgba(26, 16, 48, 0.7);
+}
+
+.l-btn-dark:hover {
+  box-shadow: 0 16px 40px -10px rgba(26, 16, 48, 0.85);
+}
+
+.l-btn-dark .l-btn-dot {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  background: var(--l-cream);
+  color: var(--l-ink);
+  transition: transform 0.4s var(--l-ease);
+}
+
+.l-btn-dark:hover .l-btn-dot {
+  transform: rotate(-45deg);
+}
+
+.l-btn-light {
+  padding: 0.5rem 0.5rem 0.5rem 1.6rem;
+  background: var(--l-cream);
+  color: var(--l-ink);
+  box-shadow: 0 10px 40px -10px rgba(255, 180, 143, 0.5);
+}
+
+.l-btn-light .l-btn-dot {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  background: var(--l-ink);
+  color: var(--l-cream);
+  transition: transform 0.4s var(--l-ease);
+}
+
+.l-btn-light:hover .l-btn-dot {
+  transform: rotate(-45deg);
+}
+
+.l-btn-ghost {
+  padding: 0.5rem 1.6rem 0.5rem 0.5rem;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  color: var(--l-ink);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.l-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.l-btn-ghost .l-btn-dot {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  background: var(--l-ink);
+  color: var(--l-cream);
+}
+
+/* ---------- Type helpers ---------- */
+
+.l-grad-text {
+  color: var(--l-peach);
+}
+
+.l-section-title {
+  font-weight: 700;
+  line-height: 1.02;
+  font-size: clamp(2.2rem, 5vw, 4.25rem);
+}
+
+.l-lead {
+  color: rgba(239, 230, 255, 0.72);
+  font-size: clamp(1rem, 1.3vw, 1.2rem);
+  line-height: 1.7;
+}
+
+/* Line mask used by GSAP headline reveals */
+.l-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+.l-mask > span {
+  display: block;
+  will-change: transform;
+}
+
+/* ---------- Motion ---------- */
+
+@keyframes l-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.35);
+  }
+}
+
+.l-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #5cf2b0;
+  box-shadow: 0 0 0 4px rgba(92, 242, 176, 0.2);
+  animation: l-pulse 2s ease-in-out infinite;
+}
+
+@keyframes l-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.l-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: l-marquee 38s linear infinite;
+}
+
+.l-marquee:hover .l-marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes l-flame {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(1.35);
+  }
+}
+
+.l-flame {
+  transform-box: fill-box;
+  transform-origin: top center;
+  animation: l-flame 0.18s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .l-live-dot,
+  .l-marquee-track,
+  .l-flame {
+    animation: none;
+  }
+}
+
+/* Range input used by the Time Rewind scrubber */
+.l-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--l-pink) 0%,
+    var(--l-pink) var(--p, 50%),
+    rgba(255, 255, 255, 0.16) var(--p, 50%),
+    rgba(255, 255, 255, 0.16) 100%
+  );
+  outline: none;
+}
+
+.l-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--l-cream);
+  border: 6px solid var(--l-ink);
+  box-shadow: 0 0 0 2px var(--l-pink), 0 6px 20px rgba(255, 143, 184, 0.5);
+  cursor: grab;
+}
+
+.l-range::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: var(--l-cream);
+  border: 6px solid var(--l-ink);
+  box-shadow: 0 0 0 2px var(--l-pink);
+  cursor: grab;
+}
+
+.l-range:focus-visible {
+  outline: 2px solid var(--l-lilac);
+  outline-offset: 6px;
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+html.lenis {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}

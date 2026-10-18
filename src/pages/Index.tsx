@@ -9,60 +9,55 @@ import '@fontsource/inter/500.css';
 import '@fontsource/inter/600.css';
 import '@fontsource/inter/700.css';
 
-import Starfield from '@/components/SpaceScope/Starfield';
-import FloatingParticles from '@/components/SpaceScope/FloatingParticles';
+import '@/styles/landing.css';
+
 import Navbar from '@/components/SpaceScope/Navbar';
-import Hero from '@/components/SpaceScope/Hero';
+import LandingHero from '@/components/SpaceScope/LandingHero';
+import SkyStars from '@/components/SpaceScope/SkyStars';
+import DataStrip from '@/components/SpaceScope/DataStrip';
 import ARSkyView from '@/components/SpaceScope/ARSkyView';
 import InteractiveGlobe from '@/components/SpaceScope/InteractiveGlobe';
 import TimeRewind from '@/components/SpaceScope/TimeRewind';
+import Toolkit from '@/components/SpaceScope/Toolkit';
 import MissionTimeline from '@/components/SpaceScope/MissionTimeline';
 import LearningZone from '@/components/SpaceScope/LearningZone';
 import FinalCTA from '@/components/SpaceScope/FinalCTA';
+import Manifesto from '@/components/SpaceScope/Manifesto';
+import ClickSpark from '@/components/react-bits/ClickSpark';
 import Footer from '@/components/SpaceScope/Footer';
+import { useSmoothScroll } from '@/components/SpaceScope/gsap';
 
 const Index = () => {
-  return (
-    <div className="relative min-h-screen overflow-x-hidden">
-      {/* Background effects */}
-      <Starfield />
-      <FloatingParticles />
-      
-      {/* Noise overlay for film grain effect */}
-      <div className="noise-overlay" />
-      
-      {/* Vignette effect */}
-      <div className="vignette" />
+  useSmoothScroll();
 
-      {/* Navigation */}
+  return (
+    <ClickSpark sparkColor={["#c9b6ff", "#ff8fb8", "#ffb48f"]} sparkCount={9} sparkSize={9} sparkRadius={22} duration={650} className="landing relative min-h-screen overflow-x-clip">
+      <div className="l-grain" aria-hidden="true" />
       <Navbar />
 
-      {/* Main content */}
-      <main className="relative z-10">
-        <Hero />
-        
-        <div id="features">
+      <main>
+        <LandingHero />
+
+        {/* Dusk fades into night as the page scrolls */}
+        <div className="relative bg-[linear-gradient(180deg,var(--l-dusk)_0%,var(--l-night-2)_1100px,var(--l-night)_2600px)]">
+          <SkyStars />
+          <div className="pointer-events-none absolute left-[-20%] top-[900px] h-[700px] w-[700px] rounded-full bg-[radial-gradient(closest-side,rgba(139,107,220,0.22),transparent)]" />
+          <div className="pointer-events-none absolute right-[-20%] top-[2600px] h-[800px] w-[800px] rounded-full bg-[radial-gradient(closest-side,rgba(255,143,184,0.12),transparent)]" />
+
+          <DataStrip />
+          <Manifesto />
           <ARSkyView />
-        </div>
-        
-        <InteractiveGlobe />
-        
-        <TimeRewind />
-        
-        <div id="timeline">
+          <InteractiveGlobe />
+          <TimeRewind />
+          <Toolkit />
           <MissionTimeline />
-        </div>
-        
-        <div id="learn">
           <LearningZone />
+          <FinalCTA />
         </div>
-        
-        <FinalCTA />
       </main>
 
-      {/* Footer */}
       <Footer />
-    </div>
+    </ClickSpark>
   );
 };
 

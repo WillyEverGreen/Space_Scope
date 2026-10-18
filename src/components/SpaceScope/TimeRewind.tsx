@@ -1,567 +1,225 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { useRef, useState } from "react";
-import { Rewind, Play, Pause, Calendar, Star, Moon, Sparkles, Satellite, Globe } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { History, Pause, Play, RotateCcw } from "lucide-react";
+import { gsap, prefersReducedMotion } from "./gsap";
+import SectionHead from "./SectionHead";
+
+const W = 800;
+const H = 400;
+const PERIOD = 92.7; // minutes per ISS orbit
+const DRIFT = 3.636; // degrees of longitude gained per minute (orbit minus Earth rotation)
+const RANGE = 180; // slider covers -RANGE/2 .. +RANGE/2 minutes
+const OBSERVER = { lat: 40.71, lon: -74.0 };
+
+const wrapLon = (v: number) => ((((v + 180) % 360) + 360) % 360) - 180;
+const project = (lat: number, lon: number) => ({ x: ((lon + 180) / 360) * W, y: ((90 - lat) / 180) * H });
+const position = (t: number) => ({
+  lat: 51.6 * Math.sin((2 * Math.PI * t) / PERIOD),
+  lon: wrapLon(-40 + DRIFT * t),
+});
+
+/** Procedural dot-matrix "land" so the map reads as a world without shipping geodata. */
+const landDots = (() => {
+  const dots: { x: number; y: number; o: number }[] = [];
+  for (let i = 0; i < 100; i++) {
+    for (let j = 0; j < 44; j++) {
+      const lon = -180 + (i / 100) * 360;
+      const lat = 78 - (j / 44) * 130;
+      const a = lon * 0.045;
+      const b = lat * 0.07;
+      const f =
+        Math.sin(a * 1.3 + 1.2) + Math.sin(b * 2.1 - a * 0.6) + 0.8 * Math.sin((a + b) * 1.7) + 0.5 * Math.sin(a * 3.1 - b * 1.4) - Math.abs(lat) / 90;
+      if (f > 0.85) {
+        const p = project(lat, lon);
+        dots.push({ x: p.x, y: p.y, o: 0.18 + Math.min(0.5, (f - 0.85) * 0.5) });
+      }
+    }
+  }
+  return dots;
+})();
+
+const trackPath = (() => {
+  let d = "";
+  let prev: number | null = null;
+  for (let t = -RANGE / 2; t <= RANGE / 2; t += 1) {
+    const { lat, lon } = position(t);
+    const p = project(lat, lon);
+    const jump = prev !== null && Math.abs(lon - prev) > 180;
+    d += `${d === "" || jump ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)} `;
+    prev = lon;
+  }
+  return d;
+})();
+
+const fmtClock = (offsetMin: number) => {
+  const d = new Date(Date.now() + offsetMin * 60000);
+  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+};
 
 const TimeRewind = () => {
-  const [currentDay, setCurrentDay] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const root = useRef<HTMLElement>(null);
+  const markerRef = useRef<SVGGElement>(null);
+  const playRef = useRef<gsap.core.Tween | null>(null);
+  const [t, setT] = useState(0);
+  const [playing, setPlaying] = useState(false);
 
-  const events = [
-    { day: -28, name: "Lunar Eclipse", type: "eclipse" },
-    { day: -21, name: "Meteor Shower Peak", type: "meteor" },
-    { day: -14, name: "ISS Bright Pass", type: "satellite" },
-    { day: -7, name: "Saturn Opposition", type: "planet" },
-    { day: 0, name: "Tonight", type: "current" },
-  ];
+  const pos = useMemo(() => position(t), [t]);
+  const sunlit = (((t % PERIOD) + PERIOD) % PERIOD) < 58;
+  const pin = project(OBSERVER.lat, OBSERVER.lon);
+  const here = project(pos.lat, pos.lon);
+  const overhead = Math.hypot(here.x - pin.x, here.y - pin.y) < 60;
+  const pct = ((t + RANGE / 2) / RANGE) * 100;
 
-  const togglePlayback = () => {
-    if (isPlaying) {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      setIsPlaying(false);
-    } else {
-      setIsPlaying(true);
-      setCurrentDay(-30);
-      intervalRef.current = setInterval(() => {
-        setCurrentDay((prev) => {
-          if (prev >= 0) {
-            if (intervalRef.current) clearInterval(intervalRef.current);
-            setIsPlaying(false);
-            return 0;
-          }
-          return prev + 1;
-        });
-      }, 100);
-    }
-  };
+  useEffect(() => {
+    const marker = markerRef.current;
+    if (!marker) return;
+    gsap.to(marker, { x: here.x, y: here.y, duration: prefersReducedMotion() ? 0 : 0.35, ease: "power2.out", overwrite: true });
+  }, [here.x, here.y]);
 
-  const getMeteorPositions = () => {
-    const meteors = [];
-    const count = Math.max(0, Math.abs(currentDay + 21) < 5 ? 12 : 2);
-    for (let i = 0; i < count; i++) {
-      meteors.push({
-        id: i,
-        x: 20 + Math.random() * 60,
-        y: 10 + Math.random() * 40,
-        delay: Math.random() * 2,
-        speed: 0.6 + Math.random() * 0.4,
+  useEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    const ctx = gsap.context(() => {
+      if (prefersReducedMotion()) return;
+      gsap.from("[data-tr-stage]", {
+        y: 70, opacity: 0, duration: 1.1, ease: "power3.out",
+        scrollTrigger: { trigger: "[data-tr-stage]", start: "top 88%", once: true },
       });
+      gsap.fromTo("[data-track]", { strokeDashoffset: 3000, strokeDasharray: 3000 }, {
+        strokeDashoffset: 0, duration: 2.4, ease: "power2.inOut",
+        scrollTrigger: { trigger: "[data-tr-stage]", start: "top 70%", once: true },
+        onComplete: () => gsap.set("[data-track]", { strokeDasharray: "6 6" }),
+      });
+      gsap.to("[data-ping]", { attr: { r: 26 }, opacity: 0, duration: 1.8, repeat: -1, ease: "power1.out" });
+    }, el);
+    return () => {
+      playRef.current?.kill();
+      ctx.revert();
+    };
+  }, []);
+
+  const togglePlay = () => {
+    if (playing) {
+      playRef.current?.kill();
+      setPlaying(false);
+      return;
     }
-    return meteors;
+    const s = { v: t >= RANGE / 2 - 1 ? -RANGE / 2 : t };
+    setPlaying(true);
+    playRef.current = gsap.to(s, {
+      v: RANGE / 2,
+      duration: ((RANGE / 2 - s.v) / RANGE) * 14,
+      ease: "none",
+      onUpdate: () => setT(Math.round(s.v * 10) / 10),
+      onComplete: () => setPlaying(false),
+    });
   };
 
-  const getActiveEvent = () => {
-    return events.find((e) => Math.abs(e.day - currentDay) < 3);
+  const reset = () => {
+    playRef.current?.kill();
+    setPlaying(false);
+    const s = { v: t };
+    gsap.to(s, { v: 0, duration: 0.8, ease: "power3.inOut", onUpdate: () => setT(Math.round(s.v * 10) / 10) });
   };
 
-  const showEclipse = Math.abs(currentDay + 28) < 4;
-  const showMeteorShower = Math.abs(currentDay + 21) < 5;
-  const showISS = Math.abs(currentDay + 14) < 4;
-  const showSaturn = Math.abs(currentDay + 7) < 4;
+  const label = t === 0 ? "Now" : `${t < 0 ? "−" : "+"}${Math.abs(Math.round(t))} min`;
 
   return (
-    <section className="relative py-20 md:py-32 overflow-hidden">
-      <div className="container mx-auto px-4">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
-        >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cosmic-glow/10 border border-cosmic-glow/20 mb-4">
-            <Rewind className="w-4 h-4 text-cosmic-glow" />
-            <span className="text-sm text-cosmic-glow font-medium">
-              Time Rewind
-            </span>
-          </div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold mb-4">
-            <span className="text-star-white">Rewind the </span>
-            <span className="text-cosmic-glow">Cosmos</span>
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Missed last night's meteor shower? Travel back in time and see what
-            you missed.
-          </p>
-        </motion.div>
+    <section ref={root} className="relative z-10 py-24 md:py-36">
+      <div className="mx-auto max-w-6xl px-6">
+        <SectionHead
+          align="center"
+          lines={["Scrub through", <span key="a" className="l-grad-text">orbital history.</span>]}
+          lead="Drag the timeline to replay where the ISS has been, or fast-forward to see exactly when it will fly over you next."
+        />
 
-        {/* Sky viewer */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="relative max-w-4xl mx-auto"
-        >
-          {/* Sky canvas (Removed gradient) */}
-          <div
-            className="relative aspect-video rounded-2xl overflow-hidden glass-card border-glow"
-            style={{
-              background: "hsl(230 60% 8%)",
-            }}
-          >
-            {/* Stars */}
-            <div className="absolute inset-0">
-              {[...Array(50)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute w-1 h-1 rounded-full bg-star-white"
-                  style={{
-                    left: `${Math.random() * 100}%`,
-                    top: `${Math.random() * 70}%`,
-                    opacity: Math.random() * 0.8 + 0.2,
-                  }}
-                  animate={{
-                    opacity: [0.3, 0.8, 0.3],
-                  }}
-                  transition={{
-                    duration: 2 + Math.random() * 2,
-                    repeat: Infinity,
-                    delay: Math.random() * 2,
-                  }}
-                />
+        <div data-tr-stage className="l-card mt-14 p-3 sm:p-5">
+          <div className="relative overflow-hidden rounded-[1.4rem] bg-[radial-gradient(120%_120%_at_50%_0%,#2a1766_0%,#150b33_60%,#0c0620_100%)]">
+            <svg viewBox={`0 0 ${W} ${H}`} className="block w-full" role="img" aria-label="World map with the ISS ground track and its position at the selected time">
+              {landDots.map((d, i) => (
+                <circle key={i} cx={d.x} cy={d.y} r="2.2" fill="#c9b6ff" opacity={d.o} />
               ))}
-            </div>
+              {[-60, -30, 0, 30, 60].map((lat) => {
+                const y = project(lat, 0).y;
+                return <line key={lat} x1="0" x2={W} y1={y} y2={y} stroke="#fff" strokeOpacity="0.06" />;
+              })}
+              <path data-track d={trackPath} fill="none" stroke="#ff8fb8" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.85" />
 
-            {/* Aurora effect during eclipse */}
-            {showEclipse && (
-              <motion.div
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background:
-                    "radial-gradient(ellipse at 70% 30%, rgba(139, 92, 246, 0.15), transparent 60%)",
-                }}
-                animate={{
-                  opacity: [0.3, 0.6, 0.3],
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                }}
-              />
-            )}
+              {/* Observer */}
+              <g transform={`translate(${pin.x} ${pin.y})`}>
+                <circle r="5" fill="#ffd9a0" />
+                <circle r="11" fill="none" stroke="#ffd9a0" strokeOpacity="0.5" />
+                <text x="16" y="4" fontSize="12" fontWeight="600" fill="#ffd9a0" fontFamily="Inter, sans-serif">You</text>
+              </g>
 
-            {/* Meteor shower glow effect */}
-            {showMeteorShower && (
-              <motion.div
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background:
-                    "radial-gradient(circle at 50% 20%, rgba(255, 215, 0, 0.08), transparent 50%)",
-                }}
-                animate={{
-                  opacity: [0.4, 0.7, 0.4],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                }}
-              />
-            )}
-
-            {/* Moon */}
-            <motion.div
-              className="absolute right-[15%] top-[20%] w-16 h-16 md:w-24 md:h-24"
-              animate={{
-                x: currentDay * 2,
-                scale: showEclipse ? [1, 0.95, 1] : 1,
-              }}
-              transition={{
-                scale: { duration: 2, repeat: Infinity },
-              }}
-            >
-              <div
-                className="w-full h-full rounded-full bg-[#f1f5f9] relative overflow-hidden"
-                style={{
-                  boxShadow: showEclipse
-                    ? "0 0 60px rgba(139, 92, 246, 0.6)"
-                    : "0 0 40px rgba(255, 255, 255, 0.3)",
-                }}
-              >
-                {/* Eclipse shadow overlay */}
-                {showEclipse && (
-                  <motion.div
-                    className="absolute inset-0 rounded-full"
-                    style={{
-                      background:
-                        "radial-gradient(circle at 30% 30%, transparent 30%, hsl(230 60% 8%) 70%)",
-                    }}
-                    animate={{
-                      opacity: [0.3, 0.7, 0.3],
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                    }}
-                  />
-                )}
-              </div>
-            </motion.div>
-
-            {/* Saturn */}
-            {showSaturn && (
-              <motion.div
-                className="absolute left-[20%] top-[30%]"
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.5 }}
-              >
-                {/* Saturn planet */}
-                <div className="relative w-12 h-12 md:w-16 md:h-16">
-                  <div
-                    className="w-full h-full rounded-full"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, #e4c087 0%, #d9a962 100%)",
-                      boxShadow: "0 0 30px rgba(228, 192, 135, 0.4)",
-                    }}
-                  />
-                  {/* Saturn rings */}
-                  <div
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-8 md:w-28 md:h-10 rounded-full border-2 border-[#d9a962] opacity-60"
-                    style={{
-                      transform:
-                        "translateX(-50%) translateY(-50%) rotateX(75deg)",
-                    }}
-                  />
-                  <motion.div
-                    className="absolute -inset-2 rounded-full border border-cosmic-gold/20"
-                    animate={{
-                      scale: [1, 1.2, 1],
-                      opacity: [0.3, 0, 0.3],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                    }}
-                  />
-                </div>
-              </motion.div>
-            )}
-
-            {/* ISS Satellite */}
-            {showISS && (
-              <motion.div
-                className="absolute"
-                initial={{ x: "0%", y: "20%" }}
-                animate={{
-                  x: ["0%", "100%"],
-                  y: ["20%", "30%", "20%"],
-                }}
-                transition={{
-                  duration: 8,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
-              >
-                <div className="relative">
-                  {/* ISS body */}
-                  <div className="flex items-center gap-1">
-                    <div className="w-1 h-3 bg-muted-foreground rounded" />
-                    <div className="w-4 h-4 bg-star-white rounded" />
-                    <div className="w-1 h-3 bg-muted-foreground rounded" />
-                  </div>
-                  {/* Light trail */}
-                  <motion.div
-                    className="absolute top-1/2 right-full w-8 h-0.5"
-                    style={{
-                      background:
-                        "linear-gradient(to left, rgba(255,255,255,0.6), transparent)",
-                    }}
-                    animate={{
-                      opacity: [0.6, 0.3, 0.6],
-                    }}
-                    transition={{
-                      duration: 1,
-                      repeat: Infinity,
-                    }}
-                  />
-                </div>
-              </motion.div>
-            )}
-
-            {/* Meteors */}
-            {getMeteorPositions().map((meteor) => (
-              <motion.div
-                key={meteor.id}
-                className="absolute"
-                style={{
-                  left: `${meteor.x}%`,
-                  top: `${meteor.y}%`,
-                }}
-                animate={{
-                  x: [0, -120],
-                  y: [0, 120],
-                  opacity: [0, 1, 0.8, 0],
-                }}
-                transition={{
-                  duration: meteor.speed,
-                  delay: meteor.delay,
-                  repeat: Infinity,
-                  repeatDelay: showMeteorShower ? 0.5 : 2 + Math.random() * 3,
-                  ease: "easeIn",
-                }}
-              >
-                <div
-                  className="relative"
-                  style={{
-                    filter: "blur(0.5px)",
-                  }}
-                >
-                  {/* Main meteor trail */}
-                  <div
-                    className="w-16 md:w-24 h-0.5 -rotate-45 origin-right"
-                    style={{
-                      background:
-                        "linear-gradient(to right, transparent, hsl(var(--star-white)), transparent)",
-                      boxShadow: showMeteorShower
-                        ? "0 0 8px rgba(255, 255, 255, 0.8)"
-                        : "none",
-                    }}
-                  />
-                  {/* Meteor head glow */}
-                  <div
-                    className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-star-white"
-                    style={{
-                      boxShadow: "0 0 10px 2px rgba(255, 255, 255, 0.6)",
-                    }}
-                  />
-                </div>
-              </motion.div>
-            ))}
-
-            {/* Timestamp */}
-            <div className="absolute top-4 left-4 glass-card px-4 py-2">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-cosmic-glow" />
-                <span className="font-mono text-sm text-star-white">
-                  {currentDay === 0
-                    ? "Tonight"
-                    : `${Math.abs(currentDay)} days ago`}
-                </span>
-              </div>
-            </div>
-
-            {/* Event indicator */}
-            <AnimatePresence mode="wait">
-              {getActiveEvent() && (
-                <motion.div
-                  key={getActiveEvent()?.day}
-                  initial={{ opacity: 0, y: -10, scale: 0.9 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 10, scale: 0.9 }}
-                  className="absolute top-4 right-4 glass-card px-4 py-2 border-glow"
-                >
-                  <div className="flex items-center gap-2">
-                    {getActiveEvent()?.type === "eclipse" && (
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                      >
-                        <Moon className="w-4 h-4 text-cosmic-purple" />
-                      </motion.div>
-                    )}
-                    {getActiveEvent()?.type === "meteor" && (
-                      <motion.div
-                        animate={{ 
-                          scale: [1, 1.2, 1],
-                        }}
-                        transition={{ duration: 1, repeat: Infinity }}
-                      >
-                        <Sparkles className="w-4 h-4 text-cosmic-gold" />
-                      </motion.div>
-                    )}
-                    {getActiveEvent()?.type === "satellite" && (
-                      <motion.div
-                        animate={{ 
-                          y: [0, -3, 0],
-                        }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                      >
-                        <Satellite className="w-4 h-4 text-cosmic-glow" />
-                      </motion.div>
-                    )}
-                    {getActiveEvent()?.type === "planet" && (
-                      <motion.div
-                        animate={{ 
-                          rotate: [0, 360],
-                        }}
-                        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                      >
-                        <Globe className="w-4 h-4 text-meteor-gold" />
-                      </motion.div>
-                    )}
-                    <span className="text-sm text-star-white font-medium">
-                      {getActiveEvent()?.name}
-                    </span>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Silhouette horizon */}
-            <div
-              className="absolute bottom-0 left-0 right-0 h-1/4"
-              style={{
-                background:
-                  "linear-gradient(to top, hsl(230 60% 6%) 0%, transparent 100%)",
-              }}
-            />
-            <svg
-              className="absolute bottom-0 left-0 right-0 h-16 md:h-24"
-              viewBox="0 0 1200 100"
-              preserveAspectRatio="none"
-            >
-              <path
-                d="M0 100 L0 60 Q100 40 200 50 T400 45 T600 55 T800 40 T1000 50 T1200 45 L1200 100 Z"
-                fill="hsl(230 60% 6%)"
-              />
+              {/* ISS marker */}
+              <g ref={markerRef}>
+                <circle data-ping r="10" fill="none" stroke="#ff8fb8" strokeWidth="2" />
+                <circle r="9" fill="#ff8fb8" fillOpacity="0.25" />
+                <circle r="5.5" fill="#fff5ee" />
+                <circle r="2.5" fill="#1a1030" />
+              </g>
             </svg>
-          </div>
 
-          {/* Timeline scrubber */}
-          <div className="mt-6 px-4">
-            <div className="flex items-center gap-4">
-              <motion.button
-                onClick={togglePlayback}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className={`w-12 h-12 rounded-full border flex items-center justify-center transition-all ${
-                  isPlaying
-                    ? "bg-cosmic-glow/30 border-cosmic-glow text-cosmic-glow"
-                    : "bg-cosmic-glow/20 border-cosmic-glow/30 text-cosmic-glow hover:bg-cosmic-glow/30"
-                }`}
-                style={
-                  isPlaying
-                    ? { boxShadow: "0 0 20px rgba(99, 102, 241, 0.4)" }
-                    : {}
-                }
-              >
-                <motion.div
-                  animate={isPlaying ? { rotate: 360 } : {}}
-                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                >
-                  {isPlaying ? (
-                    <Pause className="w-5 h-5" />
-                  ) : (
-                    <Play className="w-5 h-5 ml-0.5" />
-                  )}
-                </motion.div>
-              </motion.button>
-
-              <div className="flex-1 relative">
-                {/* Track */}
-                <div className="h-2 rounded-full bg-muted">
-                  <div
-                    className="h-full rounded-full bg-cosmic-glow"
-                    style={{ width: `${((currentDay + 30) / 30) * 100}%` }}
-                  />
-                </div>
-
-                {/* Event markers */}
-                {events
-                  .filter((e) => e.day < 0)
-                  .map((event) => {
-                    const getMarkerColor = () => {
-                      switch (event.type) {
-                        case "eclipse":
-                          return "bg-cosmic-purple border-cosmic-purple";
-                        case "meteor":
-                          return "bg-cosmic-gold border-cosmic-gold";
-                        case "satellite":
-                          return "bg-cosmic-glow border-cosmic-glow";
-                        case "planet":
-                          return "bg-meteor-gold border-meteor-gold";
-                        default:
-                          return "bg-cosmic-gold border-space-deep";
-                      }
-                    };
-
-                    return (
-                      <motion.div
-                        key={event.day}
-                        className={`absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 cursor-pointer ${getMarkerColor()}`}
-                        style={{ left: `${((event.day + 30) / 30) * 100}%` }}
-                        title={event.name}
-                        whileHover={{ scale: 1.5 }}
-                        animate={
-                          Math.abs(currentDay - event.day) < 3
-                            ? {
-                                scale: [1, 1.3, 1],
-                                boxShadow: [
-                                  "0 0 0px rgba(99, 102, 241, 0)",
-                                  "0 0 12px rgba(99, 102, 241, 0.6)",
-                                  "0 0 0px rgba(99, 102, 241, 0)",
-                                ],
-                              }
-                            : {}
-                        }
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                        }}
-                        onClick={() => setCurrentDay(event.day)}
-                      />
-                    );
-                  })}
-
-                {/* Scrubber handle */}
-                <input
-                  type="range"
-                  min={-30}
-                  max={0}
-                  value={currentDay}
-                  onChange={(e) => setCurrentDay(parseInt(e.target.value))}
-                  className="absolute inset-0 w-full opacity-0 cursor-pointer"
-                />
-              </div>
-
-              <span className="text-sm font-mono text-muted-foreground min-w-[80px] text-right">
-                {currentDay === 0 ? "Now" : `${Math.abs(currentDay)}d ago`}
+            {/* HUD */}
+            <div className="pointer-events-none absolute left-3 top-3 flex flex-wrap gap-2 sm:left-5 sm:top-5">
+              <span className="l-glass-dark rounded-full px-3.5 py-1.5 text-xs font-semibold">{fmtClock(t)} local</span>
+              <span className={`rounded-full px-3.5 py-1.5 text-xs font-semibold ${sunlit ? "bg-[var(--l-gold)] text-[var(--l-ink)]" : "bg-[var(--l-ink)] text-[var(--l-lilac)]"}`}>
+                {sunlit ? "Sunlit" : "In Earth's shadow"}
               </span>
+              {overhead && <span className="rounded-full bg-[var(--l-pink)] px-3.5 py-1.5 text-xs font-bold text-[var(--l-ink)]">Passing over you</span>}
             </div>
-
-            {/* Event legend */}
-            <div className="flex flex-wrap gap-4 mt-4 justify-center">
-              {events
-                .filter((e) => e.day < 0)
-                .map((event) => {
-                  const getEventIcon = () => {
-                    switch (event.type) {
-                      case "eclipse":
-                        return <Moon className="w-3 h-3" />;
-                      case "meteor":
-                        return <Sparkles className="w-3 h-3" />;
-                      case "satellite":
-                        return <Satellite className="w-3 h-3" />;
-                      case "planet":
-                        return <Globe className="w-3 h-3" />;
-                      default:
-                        return <Star className="w-3 h-3" />;
-                    }
-                  };
-
-                  return (
-                    <motion.button
-                      key={event.day}
-                      onClick={() => setCurrentDay(event.day)}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`text-xs px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5 ${
-                        Math.abs(currentDay - event.day) < 3
-                          ? "bg-cosmic-glow/20 text-cosmic-glow border border-cosmic-glow/30 glow-pulse"
-                          : "bg-muted/30 text-muted-foreground hover:bg-muted/50"
-                      }`}
-                    >
-                      {getEventIcon()}
-                      {event.name}
-                    </motion.button>
-                  );
-                })}
+            <div className="pointer-events-none absolute bottom-3 right-3 hidden gap-6 rounded-2xl bg-black/30 px-4 py-2 text-xs backdrop-blur sm:flex">
+              <span><span className="text-[var(--l-mist)]/50">LAT </span><b className="font-heading">{pos.lat.toFixed(1)}°</b></span>
+              <span><span className="text-[var(--l-mist)]/50">LON </span><b className="font-heading">{pos.lon.toFixed(1)}°</b></span>
             </div>
           </div>
-        </motion.div>
+
+          {/* Scrubber */}
+          <div className="flex flex-col gap-5 px-2 pb-2 pt-6 sm:flex-row sm:items-center sm:px-4">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={togglePlay}
+                className="grid h-12 w-12 place-items-center rounded-full bg-[var(--l-cream)] text-[var(--l-ink)] transition-transform hover:scale-105"
+                aria-label={playing ? "Pause replay" : "Play replay"}
+              >
+                {playing ? <Pause className="h-5 w-5 fill-current" /> : <Play className="h-5 w-5 translate-x-px fill-current" />}
+              </button>
+              <button
+                onClick={reset}
+                className="grid h-12 w-12 place-items-center rounded-full border border-white/20 text-white transition-colors hover:bg-white/10"
+                aria-label="Jump to now"
+              >
+                <RotateCcw className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="flex-1">
+              <input
+                type="range"
+                min={-RANGE / 2}
+                max={RANGE / 2}
+                step={0.5}
+                value={t}
+                onChange={(e) => {
+                  playRef.current?.kill();
+                  setPlaying(false);
+                  setT(Number(e.target.value));
+                }}
+                className="l-range"
+                style={{ ["--p" as string]: `${pct}%` }}
+                aria-label="Time offset in minutes"
+              />
+              <div className="mt-3 flex justify-between text-xs text-[var(--l-mist)]/50">
+                <span>−90 min</span>
+                <span>Now</span>
+                <span>+90 min</span>
+              </div>
+            </div>
+            <div className="flex min-w-[8.5rem] items-center gap-2 rounded-full bg-white/10 px-4 py-2.5 font-heading text-sm font-semibold">
+              <History className="h-4 w-4 text-[var(--l-pink)]" />
+              {label}
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
