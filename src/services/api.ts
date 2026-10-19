@@ -1,8 +1,21 @@
 // API Service for fetching space data from external APIs
 import type { IssPosition, SpaceWeatherData, ApodResponse, SpaceNewsResponse } from '@/types';
 
-// Set VITE_NASA_API_KEY in .env for higher rate limits; DEMO_KEY works but is heavily throttled
-const NASA_API_KEY: string = import.meta.env.VITE_NASA_API_KEY || 'DEMO_KEY';
+// In production NASA calls go through the /api/nasa serverless proxy, which holds the key
+// (NASA_API_KEY on the host). In local development they go straight to api.nasa.gov using
+// VITE_NASA_API_KEY from .env, falling back to the heavily throttled DEMO_KEY.
+function nasaUrl(endpoint: 'apod' | 'flr' | 'gst', params: Record<string, string | undefined> = {}): string {
+  const query = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) if (value) query.set(key, value);
+
+  if (import.meta.env.DEV) {
+    const paths = { apod: 'planetary/apod', flr: 'DONKI/FLR', gst: 'DONKI/GST' };
+    query.set('api_key', import.meta.env.VITE_NASA_API_KEY || 'DEMO_KEY');
+    return `https://api.nasa.gov/${paths[endpoint]}?${query}`;
+  }
+  query.set('endpoint', endpoint);
+  return `/api/nasa?${query}`;
+}
 
 const REQUEST_TIMEOUT_MS = 10000;
 
@@ -175,7 +188,7 @@ export async function fetchApod(date?: string): Promise<ApodResponse> {
   const fallbackData: ApodResponse = {
     date: date || new Date().toISOString().split('T')[0],
     title: "Today's picture is unavailable",
-    explanation: "NASA's Astronomy Picture of the Day service is rate-limited or unreachable right now, so a stock night-sky photo is shown instead. Add your own free key as VITE_NASA_API_KEY (api.nasa.gov) to avoid the shared DEMO_KEY limits, then reload.",
+    explanation: "NASA's Astronomy Picture of the Day service is rate-limited or unreachable right now, so a stock night-sky photo is shown instead. Please try again in a few minutes.",
     url: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=1200',
     hdurl: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=2000',
     media_type: 'image',
@@ -183,8 +196,7 @@ export async function fetchApod(date?: string): Promise<ApodResponse> {
 
 
   const legacy = async (): Promise<ApodResponse | null> => {
-    const dateParam = date ? `&date=${date}` : '';
-    const response = await request(`https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY}${dateParam}`);
+    const response = await request(nasaUrl('apod', { date }));
     return response.ok ? ((await response.json()) as ApodResponse) : null;
   };
 
@@ -337,7 +349,7 @@ export async function fetchGeomagneticStorms(): Promise<GeomagneticStorm[]> {
     const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
     
     const response = await request(
-      `https://api.nasa.gov/DONKI/GST?startDate=${startDate}&endDate=${endDate}&api_key=${NASA_API_KEY}`
+      nasaUrl('gst', { startDate, endDate })
     );
     
     if (!response.ok) throw new Error('GST API error');
@@ -390,7 +402,7 @@ export async function fetchSolarFlares(): Promise<SolarFlare[]> {
     const startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
     
     const response = await request(
-      `https://api.nasa.gov/DONKI/FLR?startDate=${startDate}&endDate=${endDate}&api_key=${NASA_API_KEY}`
+      nasaUrl('flr', { startDate, endDate })
     );
     
     if (!response.ok) throw new Error('FLR API error');

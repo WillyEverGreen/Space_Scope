@@ -148,7 +148,9 @@ This project is built with:
 
 ## Configuration
 
-Copy `.env.example` to `.env` and add a free NASA API key (https://api.nasa.gov) as `VITE_NASA_API_KEY`. Without it the app falls back to NASA's heavily rate-limited `DEMO_KEY`.
+Copy `.env.example` to `.env` and add a free NASA API key (https://api.nasa.gov) as `VITE_NASA_API_KEY` for local development. Without it the app uses NASA's heavily rate-limited `DEMO_KEY`.
+
+In production the browser never sees the key: NASA requests go through the `api/nasa.js` serverless function, which reads `NASA_API_KEY` from the host's environment.
 
 ## How can I deploy this project?
 
@@ -156,4 +158,4 @@ This is a static Vite app. Build with `npm run build` and serve the `dist` folde
 
 - **Vercel**: import the repo. `vercel.json` already rewrites all routes to `index.html` so client-side routes such as `/dashboard/iss` work on refresh.
 - **Netlify**: connect the repo with build command `npm run build` and publish directory `dist`. `public/_redirects` provides the same single-page fallback.
-- Add `VITE_NASA_API_KEY` as an environment variable on the host.
+- Add `NASA_API_KEY` (no `VITE_` prefix, so it stays private) as an environment variable on the host.
