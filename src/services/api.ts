@@ -150,6 +150,25 @@ export async function fetchSpaceWeather(): Promise<SpaceWeatherData> {
   }
 }
 
+interface ApodBasic {
+  date: string;
+  title: string;
+  explanation: string;
+  media_type: string;
+  url: string;
+  hdurl?: string;
+  copyright?: string;
+  credit?: string;
+}
+
+const stripHtml = (html: string) =>
+  html
+    .replace(/<[^>]*>/g, '')
+    .replace(/&amp;/g, '&')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
 // NASA APOD API
 export async function fetchApod(date?: string): Promise<ApodResponse> {
   // Fallback data for when API is unavailable or rate limited
@@ -163,27 +182,39 @@ export async function fetchApod(date?: string): Promise<ApodResponse> {
   };
 
 
-  try {
+  const legacy = async (): Promise<ApodResponse | null> => {
     const dateParam = date ? `&date=${date}` : '';
     const response = await request(`https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY}${dateParam}`);
-    
-    // Handle rate limiting gracefully
-    if (response.status === 429) {
-      console.warn('NASA API rate limit reached, using fallback data');
-      return fallbackData;
+    return response.ok ? ((await response.json()) as ApodResponse) : null;
+  };
+
+  // The legacy endpoint is archived on 2026-12-01; the new feed lists the latest 25 entries
+  const current = async (): Promise<ApodResponse | null> => {
+    const response = await request('https://science.nasa.gov/wp-json/wp/v2/apod-basic?per_page=25');
+    if (!response.ok) return null;
+    const entries: ApodBasic[] = await response.json();
+    const entry = date ? entries.find((e) => e.date === date) : entries[0];
+    if (!entry) return null;
+    return {
+      date: entry.date,
+      title: entry.title,
+      explanation: stripHtml(entry.explanation).replace(/^Explanation:\s*/i, ''),
+      url: entry.url,
+      hdurl: entry.hdurl,
+      media_type: entry.media_type === 'video' ? 'video' : 'image',
+      copyright: stripHtml(entry.copyright ?? entry.credit ?? '').replace(/^Image Credit:\s*/i, '') || undefined,
+    };
+  };
+
+  for (const source of [legacy, current]) {
+    try {
+      const result = await source();
+      if (result) return result;
+    } catch (error) {
+      console.warn('APOD source failed:', error);
     }
-    
-    if (!response.ok) {
-      console.warn(`NASA API error: ${response.status}, using fallback data`);
-      return fallbackData;
-    }
-    
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('APOD fetch error:', error);
-    return fallbackData;
   }
+  return fallbackData;
 }
 
 // Space News API
