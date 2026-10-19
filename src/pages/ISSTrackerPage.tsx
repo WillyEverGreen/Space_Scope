@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Satellite, Navigation, Gauge, ArrowUp, Globe, Clock, RefreshCw } from 'lucide-react';
 import PageLayout from '@/components/Layout/PageLayout';
+import IssMap from '@/components/Dashboard/IssMap';
 import { fetchIssPosition } from '@/services/api';
 import type { IssPosition } from '@/types';
 
@@ -9,11 +10,17 @@ const ISSTrackerPage = () => {
   const [iss, setIss] = useState<IssPosition | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+  const [trail, setTrail] = useState<[number, number][]>([]);
+  const [follow, setFollow] = useState(true);
 
   const fetchData = async () => {
     setLoading(true);
     const data = await fetchIssPosition();
     setIss(data);
+    if (data.message === 'success') {
+      // Keep roughly the last 15 minutes of positions for the ground-track line
+      setTrail((prev) => [...prev, [parseFloat(data.iss_position.latitude), parseFloat(data.iss_position.longitude)] as [number, number]].slice(-90));
+    }
     setLastUpdate(new Date());
     setLoading(false);
   };
@@ -24,6 +31,8 @@ const ISSTrackerPage = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const live = iss?.message === 'success';
+  const statusLabel = !iss ? 'Connecting' : live ? 'Live' : iss.message === 'stale' ? 'Last known' : 'Offline';
   const lat = iss ? parseFloat(iss.iss_position.latitude) : 0;
   const lon = iss ? parseFloat(iss.iss_position.longitude) : 0;
   const latLabel = lat >= 0 ? 'N' : 'S';
@@ -66,80 +75,34 @@ const ISSTrackerPage = () => {
               </button>
               <div className="flex items-center gap-2">
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+                  {live && <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />}
+                  <span className={`relative inline-flex h-2 w-2 rounded-full ${live ? 'bg-green-400' : 'bg-cosmic-gold'}`} />
                 </span>
-                <span className="text-xs text-green-500 font-medium uppercase tracking-wider">Live</span>
+                <span className={`text-xs font-medium uppercase tracking-wider ${live ? 'text-green-400' : 'text-cosmic-gold'}`}>{statusLabel}</span>
               </div>
             </div>
           </div>
 
           {/* Map */}
-          <div className="relative aspect-2/1 bg-space-deep">
-            {/* World map background */}
-            <div 
-              className="absolute inset-0 opacity-30"
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 500'%3E%3Crect fill='%230a0a1a' width='1000' height='500'/%3E%3Cg fill='none' stroke='%234338ca' stroke-width='0.5' opacity='0.5'%3E%3Cpath d='M0,250 L1000,250 M500,0 L500,500'/%3E%3C/g%3E%3Cg fill='%231e1b4b' opacity='0.5'%3E%3Cellipse cx='250' cy='200' rx='120' ry='80'/%3E%3Cellipse cx='150' cy='280' rx='60' ry='40'/%3E%3Cellipse cx='750' cy='220' rx='100' ry='60'/%3E%3Cellipse cx='600' cy='180' rx='80' ry='50'/%3E%3Cellipse cx='400' cy='150' rx='60' ry='40'/%3E%3Cellipse cx='850' cy='300' rx='40' ry='30'/%3E%3C/g%3E%3C/svg%3E")`,
-                backgroundSize: 'cover',
-              }}
-            />
+          <div className="relative h-[22rem] sm:h-[28rem] xl:h-[32rem]">
+            <IssMap lat={lat} lon={lon} trail={trail} follow={follow} />
 
-            {/* Grid lines */}
-            <div className="absolute inset-0">
-              {[...Array(7)].map((_, i) => (
-                <div 
-                  key={`h-${i}`}
-                  className="absolute left-0 right-0 border-t border-star-white/5"
-                  style={{ top: `${(i + 1) * 14.28}%` }}
-                />
-              ))}
-              {[...Array(12)].map((_, i) => (
-                <div 
-                  key={`v-${i}`}
-                  className="absolute top-0 bottom-0 border-l border-star-white/5"
-                  style={{ left: `${(i + 1) * 8.33}%` }}
-                />
-              ))}
-            </div>
-
-            {/* ISS Position Marker */}
-            {iss && (
-              <motion.div
-                animate={{ x: `${mapX}%`, y: `${mapY}%` }}
-                transition={{ duration: 1, ease: 'easeOut' }}
-                className="absolute -translate-x-1/2 -translate-y-1/2"
-                style={{ left: 0, top: 0 }}
-              >
-                {/* Pulse ring */}
-                <div className="absolute inset-0 -m-4">
-                  <div className="w-8 h-8 rounded-full bg-cosmic-glow/30 animate-ping" />
-                </div>
-                {/* Icon */}
-                <div className="relative w-10 h-10 rounded-full bg-cosmic-glow flex items-center justify-center shadow-lg shadow-cosmic-glow/50">
-                  <Satellite className="w-5 h-5 text-star-white" />
-                </div>
-                {/* Label */}
-                <div className="absolute top-12 left-1/2 -translate-x-1/2 whitespace-nowrap">
-                  <div className="px-3 py-1 rounded-full glass-card text-xs font-medium text-star-white">
-                    ISS
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* Coordinates overlay */}
-            <div className="absolute bottom-4 left-4 glass-card px-4 py-2 rounded-lg">
-              <div className="flex items-center gap-4 text-sm">
-                <div>
-                  <span className="text-muted-foreground">Lat: </span>
-                  <span className="text-star-white font-mono">{Math.abs(lat).toFixed(4)}° {latLabel}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Lon: </span>
-                  <span className="text-star-white font-mono">{Math.abs(lon).toFixed(4)}° {lonLabel}</span>
-                </div>
+            <div className="pointer-events-none absolute inset-x-3 bottom-3 z-[500] flex flex-wrap items-end justify-between gap-2 sm:inset-x-4 sm:bottom-4">
+              <div className="rounded-xl border border-white/10 bg-space-deep/85 px-4 py-2 text-sm backdrop-blur">
+                <span className="text-muted-foreground">Lat </span>
+                <span className="font-mono text-star-white">{Math.abs(lat).toFixed(3)}° {latLabel}</span>
+                <span className="ml-4 text-muted-foreground">Lon </span>
+                <span className="font-mono text-star-white">{Math.abs(lon).toFixed(3)}° {lonLabel}</span>
               </div>
+              <button
+                onClick={() => setFollow((v) => !v)}
+                className={`pointer-events-auto rounded-full border px-4 py-2 text-xs font-semibold backdrop-blur transition-colors ${
+                  follow ? 'border-cosmic-pink/60 bg-cosmic-pink/15 text-cosmic-pink' : 'border-white/15 bg-space-deep/85 text-star-white/80 hover:text-star-white'
+                }`}
+                aria-pressed={follow}
+              >
+                {follow ? 'Following ISS' : 'Follow ISS'}
+              </button>
             </div>
           </div>
         </motion.div>

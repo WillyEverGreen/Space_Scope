@@ -200,7 +200,7 @@ const APODPage = () => {
               href={apod.hdurl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-linear-to-r from-cosmic-glow to-nebula-purple text-star-white font-semibold hover:opacity-90 transition-opacity"
+              className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-star-white text-space-navy font-semibold transition-transform hover:-translate-y-0.5"
             >
               <ExternalLink className="w-4 h-4" />
               View HD Image

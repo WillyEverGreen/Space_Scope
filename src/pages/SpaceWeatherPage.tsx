@@ -28,8 +28,8 @@ const SpaceWeatherPage = () => {
 
   const severityColors: Record<string, { bg: string; text: string; border: string }> = {
     low: { bg: 'bg-green-500/20', text: 'text-green-400', border: 'border-green-500/30' },
-    medium: { bg: 'bg-cyan-500/20', text: 'text-cyan-400', border: 'border-cyan-500/30' },
-    high: { bg: 'bg-amber-500/20', text: 'text-amber-400', border: 'border-amber-500/30' },
+    medium: { bg: 'bg-cosmic-glow/20', text: 'text-cosmic-glow', border: 'border-cosmic-glow/30' },
+    high: { bg: 'bg-cosmic-gold/20', text: 'text-cosmic-gold', border: 'border-cosmic-gold/30' },
     critical: { bg: 'bg-red-500/20', text: 'text-red-400', border: 'border-red-500/30' },
   };
 
@@ -96,8 +96,8 @@ const SpaceWeatherPage = () => {
           className="lg:col-span-1 glass-card p-6"
         >
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center">
-              <Sun className="w-5 h-5 text-amber-400" />
+            <div className="w-10 h-10 rounded-xl bg-cosmic-gold/20 flex items-center justify-center">
+              <Sun className="w-5 h-5 text-cosmic-gold" />
             </div>
             <div>
               <h3 className="font-heading text-star-white">Kp Index</h3>
@@ -147,7 +147,7 @@ const SpaceWeatherPage = () => {
             <span>Storm</span>
             <span>Severe</span>
           </div>
-          <div className="h-2 rounded-full bg-linear-to-r from-green-500 via-amber-500 to-red-500 mt-2" />
+          <div className="h-2 rounded-full bg-linear-to-r from-green-500 via-cosmic-gold to-red-500 mt-2" />
         </motion.div>
 
         {/* Solar Wind Card */}
@@ -158,8 +158,8 @@ const SpaceWeatherPage = () => {
           className="glass-card p-6"
         >
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-cyan-500/20 flex items-center justify-center">
-              <Wind className="w-5 h-5 text-cyan-400" />
+            <div className="w-10 h-10 rounded-xl bg-cosmic-glow/20 flex items-center justify-center">
+              <Wind className="w-5 h-5 text-cosmic-glow" />
             </div>
             <div>
               <h3 className="font-heading text-star-white">Solar Wind</h3>
@@ -173,7 +173,7 @@ const SpaceWeatherPage = () => {
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-muted-foreground">Speed</span>
                 <span className={`text-xs px-2 py-0.5 rounded-full ${
-                  (weather?.solarWind.speed || 0) > 500 ? 'bg-amber-500/20 text-amber-400' : 'bg-green-500/20 text-green-400'
+                  (weather?.solarWind.speed || 0) > 500 ? 'bg-cosmic-gold/20 text-cosmic-gold' : 'bg-green-500/20 text-green-400'
                 }`}>
                   {(weather?.solarWind.speed || 0) > 500 ? 'Elevated' : 'Normal'}
                 </span>
@@ -183,7 +183,7 @@ const SpaceWeatherPage = () => {
               </div>
               <div className="h-2 rounded-full bg-star-white/10 overflow-hidden">
                 <div 
-                  className="h-full bg-cyan-400 rounded-full transition-all"
+                  className="h-full bg-cosmic-glow rounded-full transition-all"
                   style={{ width: `${Math.min(((weather?.solarWind.speed || 0) / 800) * 100, 100)}%` }}
                 />
               </div>
@@ -290,16 +290,16 @@ const SpaceWeatherPage = () => {
           <div key={item.label} className="glass-card p-4">
             <div className="flex items-center gap-3">
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                item.status === 'normal' ? 'bg-green-500/20' : 'bg-amber-500/20'
+                item.status === 'normal' ? 'bg-green-500/20' : 'bg-cosmic-gold/20'
               }`}>
                 <item.icon className={`w-5 h-5 ${
-                  item.status === 'normal' ? 'text-green-400' : 'text-amber-400'
+                  item.status === 'normal' ? 'text-green-400' : 'text-cosmic-gold'
                 }`} />
               </div>
               <div>
                 <div className="text-star-white font-medium">{item.label}</div>
                 <div className={`text-sm ${
-                  item.status === 'normal' ? 'text-green-400' : 'text-amber-400'
+                  item.status === 'normal' ? 'text-green-400' : 'text-cosmic-gold'
                 }`}>
                   {item.status === 'normal' ? 'Operating Normally' : 'May be Affected'}
                 </div>

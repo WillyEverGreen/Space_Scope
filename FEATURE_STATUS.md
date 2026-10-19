@@ -5,7 +5,7 @@
 ### 1. **ISS Tracker** ✅
 
 - **Status**: LIVE with real data
-- **API**: Open Notify ISS API (`https://api.open-notify.org/iss-now.json`)
+- **API**: wheretheiss.at ISS API (`https://api.wheretheiss.at/v1/satellites/25544`)
 - **Features**:
   - Real-time ISS position updates
   - Live latitude/longitude coordinates
@@ -18,7 +18,7 @@
 - **Status**: LIVE with real data
 - **APIs**:
   - NOAA Planetary K-Index API
-  - NOAA Solar Wind Plasma API
+  - NOAA solar wind (speed summary plus real-time wind record)
   - NOAA GOES X-Ray Flux API
 - **Features**:
   - Real Kp Index (geomagnetic activity)
@@ -278,7 +278,7 @@
 ### ✅ Using Official Sources:
 
 - **NOAA**: Official US government space weather data
-- **NASA**: Open Notify (ISS), APOD, DONKI (storms/flares)
+- **NASA**: wheretheiss.at (ISS), APOD, DONKI (storms/flares)
 - **Spaceflight News API**: Aggregated from official space agencies
 - **Astronomical Events**: Based on published astronomical tables
 

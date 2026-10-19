@@ -75,7 +75,7 @@ const Starfield = () => {
         if (star.size > 1.5) {
           ctx.beginPath();
           ctx.arc(x, y, star.size * 3, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(99, 102, 241, ${star.opacity * 0.1 * twinkle})`;
+          ctx.fillStyle = `rgba(167, 139, 250, ${star.opacity * 0.1 * twinkle})`;
           ctx.fill();
         }
       });

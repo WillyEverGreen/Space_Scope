@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Newspaper, ExternalLink, Clock, Search, Filter, ChevronDown } from 'lucide-react';
 import PageLayout from '@/components/Layout/PageLayout';
+import NewsImage from '@/components/Dashboard/NewsImage';
 import { fetchSpaceNews } from '@/services/api';
 import { formatTimeAgo } from '@/lib/constants';
 import type { SpaceNewsArticle } from '@/types';
@@ -115,7 +116,7 @@ const NewsPage = () => {
         >
           <div className="grid md:grid-cols-2 gap-6">
             <div className="h-64 md:h-auto overflow-hidden">
-              <img
+              <NewsImage
                 src={visibleNews[0].image_url}
                 alt={visibleNews[0].title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -160,7 +161,7 @@ const NewsPage = () => {
             className="glass-card overflow-hidden group hover:border-cosmic-glow/30 transition-colors"
           >
             <div className="h-48 overflow-hidden">
-              <img
+              <NewsImage
                 src={item.image_url}
                 alt={item.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

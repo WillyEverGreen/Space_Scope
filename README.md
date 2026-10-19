@@ -89,7 +89,7 @@ cosmic-navigator/
 ## 🌐 APIs Used
 
 - **NASA APOD**: Astronomy Picture of the Day
-- **Open Notify ISS**: Real-time ISS position tracking
+- **wheretheiss.at**: Real-time ISS position, altitude and velocity (HTTPS, no key)
 - **NOAA Space Weather**: Solar and geomagnetic data
 - **Spaceflight News API**: Latest space industry news
 

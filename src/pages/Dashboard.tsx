@@ -27,7 +27,7 @@ import '@fontsource/inter/700.css';
 
 import PageLayout from '@/components/Layout/PageLayout';
 import { fetchIssPosition, fetchSpaceWeather, fetchApod, fetchSpaceNews } from '@/services/api';
-import { getKpLevel } from '@/lib/constants';
+import { getKpLevel, missions } from '@/lib/constants';
 import type { IssPosition, SpaceWeatherData, ApodResponse, SpaceNewsArticle } from '@/types';
 
 const Dashboard = () => {
@@ -55,6 +55,7 @@ const Dashboard = () => {
     fetchAllData();
   }, []);
 
+  const activeMissionCount = missions.filter((m) => m.status === 'ACTIVE').length;
   const kpLevel = weather ? getKpLevel(weather.kpIndex.value) : 'quiet';
 
   const features = [
@@ -63,15 +64,15 @@ const Dashboard = () => {
       description: 'Track the International Space Station in real-time as it orbits Earth at 28,000 km/h',
       icon: Satellite,
       href: '/dashboard/iss',
-      color: 'bg-cyan-500/20 text-cyan-400',
+      color: 'bg-cosmic-glow/20 text-cosmic-glow',
       preview: issPosition ? (
         <div className="flex items-center gap-4 text-sm">
           <div className="flex items-center gap-2">
-            <Globe className="w-4 h-4 text-cyan-400" />
+            <Globe className="w-4 h-4 text-cosmic-glow" />
             <span>Lat: {parseFloat(issPosition.iss_position.latitude).toFixed(2)}°</span>
           </div>
           <div className="flex items-center gap-2">
-            <Activity className="w-4 h-4 text-cyan-400" />
+            <Activity className="w-4 h-4 text-cosmic-glow" />
             <span>Lon: {parseFloat(issPosition.iss_position.longitude).toFixed(2)}°</span>
           </div>
         </div>
@@ -82,17 +83,17 @@ const Dashboard = () => {
       description: 'Monitor solar activity, geomagnetic conditions, and X-ray flux from the Sun',
       icon: Sun,
       href: '/dashboard/weather',
-      color: 'bg-amber-500/20 text-amber-400',
+      color: 'bg-cosmic-gold/20 text-cosmic-gold',
       preview: weather ? (
         <div className="flex items-center gap-4 text-sm">
           <div className="flex items-center gap-2">
-            <Zap className="w-4 h-4 text-amber-400" />
+            <Zap className="w-4 h-4 text-cosmic-gold" />
             <span>Kp Index: {weather.kpIndex.value.toFixed(1)}</span>
           </div>
           <span className={`px-2 py-0.5 rounded-full text-xs ${
             kpLevel === 'quiet' ? 'bg-green-500/20 text-green-400' :
-            kpLevel === 'unsettled' ? 'bg-cyan-500/20 text-cyan-400' :
-            kpLevel === 'storm' ? 'bg-amber-500/20 text-amber-400' :
+            kpLevel === 'unsettled' ? 'bg-cosmic-glow/20 text-cosmic-glow' :
+            kpLevel === 'storm' ? 'bg-cosmic-gold/20 text-cosmic-gold' :
             'bg-red-500/20 text-red-400'
           }`}>
             {kpLevel.toUpperCase()}
@@ -138,7 +139,7 @@ const Dashboard = () => {
       preview: (
         <div className="flex items-center gap-2 text-sm">
           <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-          <span className="text-star-white/70">8 Active Missions</span>
+          <span className="text-star-white/70">{activeMissionCount} Active Missions</span>
         </div>
       ),
     },
@@ -156,10 +157,10 @@ const Dashboard = () => {
         className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
       >
         {[
-          { label: 'ISS Altitude', value: '408 km', icon: Satellite },
+          { label: 'ISS Altitude', value: issPosition?.altitude_km ? `${issPosition.altitude_km} km` : '--', icon: Satellite },
           { label: 'Solar Activity', value: weather?.xrayFlux.fluxClass || 'B', icon: Sun },
-          { label: 'News Today', value: `${news.length}+`, icon: Newspaper },
-          { label: 'Active Missions', value: '8', icon: Rocket },
+          { label: 'Latest Stories', value: String(news.length), icon: Newspaper },
+          { label: 'Active Missions', value: String(activeMissionCount), icon: Rocket },
         ].map((stat, i) => (
           <div key={stat.label} className="glass-card p-4">
             <div className="flex items-center gap-3">

@@ -37,7 +37,7 @@ const FloatingParticles = () => {
             top: `${particle.y}%`,
             width: particle.size,
             height: particle.size,
-            backgroundColor: "rgba(99, 102, 241, 0.4)",
+            backgroundColor: "rgba(167, 139, 250, 0.4)",
           }}
           animate={{
             y: [0, -100, 0],

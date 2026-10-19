@@ -256,8 +256,8 @@
 @utility glass-card {
   /* Glassmorphism Card */
   @apply relative overflow-hidden rounded-2xl;
-  background: hsl(var(--card) / 0.6);
-  backdrop-filter: blur(20px);
+  background: hsl(var(--card) / 0.55);
+  backdrop-filter: blur(18px) saturate(140%);
   border: 1px solid hsl(var(--star-white) / 0.1);
 }
 
@@ -274,13 +274,13 @@
 @utility btn-cosmic {
   /* Cosmic Button Styles */
   @apply relative inline-flex items-center justify-center px-8 py-4 font-heading font-semibold text-lg rounded-full overflow-hidden transition-all duration-300;
-  background: var(--gradient-cosmic);
-  color: hsl(var(--star-white));
+  background: hsl(var(--star-white));
+  color: hsl(var(--space-navy));
   box-shadow: var(--glow-primary);
 
   &:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 0 50px hsl(var(--cosmic-glow) / 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 16px 40px -10px hsl(var(--aurora-pink) / 0.55);
   }
 
   &::before {
@@ -290,7 +290,7 @@
     background: linear-gradient(
       45deg,
       transparent 40%,
-      hsl(var(--star-white) / 0.2) 50%,
+      hsl(var(--cosmic-glow) / 0.25) 50%,
       transparent 60%
     );
     transform: translateX(-100%);
@@ -316,8 +316,7 @@
 }
 
 @utility text-gradient {
-  /* Text Gradient (Removed) */
-  @apply text-cosmic-glow;
+  @apply text-cosmic-pink;
 }
 
 @utility section-cosmic {
@@ -422,71 +421,71 @@
 @layer base {
   :root {
     /* Core Space Palette */
-    --background: 230 60% 6%;
-    --foreground: 210 40% 96%;
+    --background: 257 68% 7%;
+    --foreground: 24 100% 97%;
 
-    --card: 230 45% 10%;
-    --card-foreground: 210 40% 96%;
+    --card: 258 48% 13%;
+    --card-foreground: 24 100% 97%;
 
-    --popover: 230 50% 8%;
-    --popover-foreground: 210 40% 96%;
+    --popover: 258 55% 9%;
+    --popover-foreground: 24 100% 97%;
 
     /* Brand Colors */
-    --primary: 239 84% 67%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 258 85% 76%;
+    --primary-foreground: 257 50% 12%;
 
-    --secondary: 263 70% 50%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 262 60% 52%;
+    --secondary-foreground: 24 100% 97%;
 
-    --accent: 330 81% 60%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 338 100% 78%;
+    --accent-foreground: 257 50% 12%;
 
-    --muted: 230 30% 15%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 258 30% 17%;
+    --muted-foreground: 255 30% 78%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
     /* UI Elements */
-    --border: 230 30% 20%;
-    --input: 230 30% 15%;
-    --ring: 239 84% 67%;
+    --border: 258 28% 24%;
+    --input: 258 30% 17%;
+    --ring: 258 85% 76%;
 
     --radius: 0.75rem;
 
     /* Custom Space Colors */
-    --space-navy: 230 60% 6%;
-    --space-deep: 235 50% 4%;
-    --cosmic-glow: 239 84% 67%;
-    --nebula-purple: 263 70% 50%;
-    --aurora-pink: 330 81% 60%;
-    --star-white: 210 40% 96%;
-    --meteor-gold: 45 93% 58%;
+    --space-navy: 257 68% 7%;
+    --space-deep: 258 72% 5%;
+    --cosmic-glow: 258 85% 76%;
+    --nebula-purple: 262 60% 52%;
+    --aurora-pink: 338 100% 78%;
+    --star-white: 24 100% 97%;
+    --meteor-gold: 35 100% 80%;
 
     /* Gradients (Removed) */
-    --gradient-cosmic: hsl(239 84% 67%);
-    --gradient-aurora: hsl(263 70% 50% / 0.3);
-    --gradient-space: hsl(230 45% 12%);
+    --gradient-cosmic: hsl(24 100% 97%);
+    --gradient-aurora: hsl(262 60% 52% / 0.3);
+    --gradient-space: hsl(258 48% 13%);
 
     /* Shadows & Glows */
-    --glow-primary: 0 0 30px hsl(239 84% 67% / 0.4);
-    --glow-accent: 0 0 30px hsl(330 81% 60% / 0.4);
-    --glow-soft: 0 0 60px hsl(239 84% 67% / 0.2);
+    --glow-primary: 0 12px 36px -10px hsl(338 100% 78% / 0.45);
+    --glow-accent: 0 0 30px hsl(338 100% 78% / 0.35);
+    --glow-soft: 0 20px 60px -20px hsl(258 85% 76% / 0.35);
 
     /* Sidebar */
-    --sidebar-background: 230 45% 8%;
-    --sidebar-foreground: 210 40% 96%;
-    --sidebar-primary: 239 84% 67%;
-    --sidebar-primary-foreground: 210 40% 98%;
-    --sidebar-accent: 230 30% 15%;
-    --sidebar-accent-foreground: 210 40% 96%;
-    --sidebar-border: 230 30% 20%;
-    --sidebar-ring: 239 84% 67%;
+    --sidebar-background: 258 55% 9%;
+    --sidebar-foreground: 24 100% 97%;
+    --sidebar-primary: 258 85% 76%;
+    --sidebar-primary-foreground: 257 50% 12%;
+    --sidebar-accent: 258 30% 17%;
+    --sidebar-accent-foreground: 24 100% 97%;
+    --sidebar-border: 258 28% 24%;
+    --sidebar-ring: 258 85% 76%;
   }
 
   .dark {
-    --background: 230 60% 6%;
-    --foreground: 210 40% 96%;
+    --background: 257 68% 7%;
+    --foreground: 24 100% 97%;
   }
 }
 
@@ -603,4 +602,42 @@
   [role='button']:not(:disabled) {
     cursor: pointer;
   }
+}
+
+/* ISS marker on the Leaflet map */
+.iss-marker {
+  background: none;
+  border: 0;
+}
+
+.iss-marker__dot {
+  position: absolute;
+  inset: 13px;
+  border-radius: 999px;
+  background: hsl(var(--star-white));
+  box-shadow: 0 0 0 5px hsl(var(--aurora-pink) / 0.45), 0 0 24px hsl(var(--aurora-pink) / 0.8);
+}
+
+.iss-marker__pulse {
+  position: absolute;
+  inset: 4px;
+  border-radius: 999px;
+  border: 2px solid hsl(var(--aurora-pink));
+  animation: iss-pulse 2.2s ease-out infinite;
+}
+
+@keyframes iss-pulse {
+  from {
+    transform: scale(0.5);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.leaflet-container {
+  font-family: inherit;
+  background: hsl(var(--space-deep));
 }

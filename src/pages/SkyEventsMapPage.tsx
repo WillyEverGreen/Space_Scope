@@ -293,7 +293,7 @@ const SkyEventsMapPage = () => {
   const getVisibilityBgColor = (visibility: VisibilityLevel) => {
     switch (visibility) {
       case 'full': return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'partial': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+      case 'partial': return 'bg-cosmic-gold/20 text-cosmic-gold border-cosmic-gold/30';
       case 'none': return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
     }
   };
@@ -392,17 +392,17 @@ const SkyEventsMapPage = () => {
                         <div className="flex gap-1 mt-2">
                           {event.visibility.northern !== 'none' && (
                             <span className={`px-1.5 py-0.5 rounded text-[10px] ${
-                              event.visibility.northern === 'full' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'
+                              event.visibility.northern === 'full' ? 'bg-green-500/20 text-green-400' : 'bg-cosmic-gold/20 text-cosmic-gold'
                             }`}>N</span>
                           )}
                           {event.visibility.tropical !== 'none' && (
                             <span className={`px-1.5 py-0.5 rounded text-[10px] ${
-                              event.visibility.tropical === 'full' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'
+                              event.visibility.tropical === 'full' ? 'bg-green-500/20 text-green-400' : 'bg-cosmic-gold/20 text-cosmic-gold'
                             }`}>T</span>
                           )}
                           {event.visibility.southern !== 'none' && (
                             <span className={`px-1.5 py-0.5 rounded text-[10px] ${
-                              event.visibility.southern === 'full' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'
+                              event.visibility.southern === 'full' ? 'bg-green-500/20 text-green-400' : 'bg-cosmic-gold/20 text-cosmic-gold'
                             }`}>S</span>
                           )}
                         </div>
@@ -427,7 +427,7 @@ const SkyEventsMapPage = () => {
                 <span className="text-sm text-star-white/80">Fully Visible</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-4 h-4 rounded-full bg-yellow-500" />
+                <div className="w-4 h-4 rounded-full bg-cosmic-gold" />
                 <span className="text-sm text-star-white/80">Partially Visible</span>
               </div>
               <div className="flex items-center gap-3">
@@ -443,7 +443,7 @@ const SkyEventsMapPage = () => {
             <div className="mt-3 pt-3 border-t border-star-white/10">
               <p className="text-xs text-muted-foreground flex items-center gap-1">
                 <span className="text-green-400">N</span>=Northern,
-                <span className="text-yellow-400">T</span>=Tropical,
+                <span className="text-cosmic-gold">T</span>=Tropical,
                 <span className="text-green-400">S</span>=Southern
               </p>
             </div>
@@ -453,14 +453,14 @@ const SkyEventsMapPage = () => {
           {storms.length > 0 && (
             <div className="glass-card p-4">
               <h3 className="font-heading text-sm text-star-white mb-3 flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-amber-400" />
+                <AlertTriangle className="w-4 h-4 text-cosmic-gold" />
                 Recent Geomagnetic Storms
               </h3>
               <div className="space-y-2">
                 {storms.slice(0, 3).map((storm) => (
-                  <div key={storm.id} className="text-xs p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                  <div key={storm.id} className="text-xs p-2 rounded-lg bg-cosmic-gold/10 border border-cosmic-gold/20">
                     <div className="flex items-center justify-between">
-                      <span className="text-amber-400 font-medium">Kp {storm.kpIndex}</span>
+                      <span className="text-cosmic-gold font-medium">Kp {storm.kpIndex}</span>
                       <span className="text-muted-foreground">
                         {new Date(storm.startTime).toLocaleDateString()}
                       </span>
@@ -505,9 +505,10 @@ const SkyEventsMapPage = () => {
               style={{ background: '#0a0a1a' }}
             >
               <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                attribution="Tiles &copy; Esri &mdash; Esri, HERE, Garmin, OpenStreetMap contributors"
+                url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}"
               />
+              <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}" />
               
               {/* Full visibility zones */}
               {visibilityZones.full.map((zone) => (
@@ -544,7 +545,7 @@ const SkyEventsMapPage = () => {
                 >
                   <Popup>
                     <div className="text-center">
-                      <strong className="text-yellow-600">{zone.name}</strong><br />
+                      <strong className="text-cosmic-gold">{zone.name}</strong><br />
                       <span className="text-sm">Partial visibility</span>
                     </div>
                   </Popup>

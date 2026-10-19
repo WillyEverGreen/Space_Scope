@@ -6,8 +6,8 @@ import { missions } from '@/lib/constants';
 
 const statusColors: Record<string, string> = {
   ACTIVE: 'bg-green-500/20 text-green-400 border-green-500/30',
-  UPCOMING: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-  COMPLETED: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+  UPCOMING: 'bg-cosmic-gold/20 text-cosmic-gold border-cosmic-gold/30',
+  COMPLETED: 'bg-cosmic-glow/20 text-cosmic-glow border-cosmic-glow/30',
 };
 
 const planetIcons: Record<string, React.ElementType> = {
@@ -128,12 +128,13 @@ const MissionsPage = () => {
                     <div className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
                       <span>
-                        {mission.status === 'UPCOMING' ? 'Planned: ' : 'Launched: '}
-                        {new Date(mission.launchDate).toLocaleDateString('en-US', { 
-                          month: 'short', 
-                          day: 'numeric', 
-                          year: 'numeric' 
-                        })}
+                        {mission.status === 'UPCOMING' && new Date(mission.launchDate) < new Date()
+                          ? 'Schedule: check the agency for the latest date'
+                          : `${mission.status === 'UPCOMING' ? 'Planned: ' : 'Launched: '}${new Date(mission.launchDate).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric',
+                            })}`}
                       </span>
                     </div>
                     {mission.planet && (
