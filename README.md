@@ -60,11 +60,12 @@ Visit `http://localhost:8083` to see SpaceScope in action!
 ## 🛠️ Tech Stack
 
 - **Frontend**: React 18 + TypeScript + Vite
-- **3D Graphics**: Three.js with React Three Fiber
+- **Motion**: GSAP (ScrollTrigger, MotionPath) with Lenis smooth scrolling
+- **Interactive components**: React Bits (installed through the shadcn registry, see `src/components/react-bits`)
 - **UI Components**: Radix UI + Tailwind CSS
 - **State Management**: TanStack React Query
 - **Routing**: React Router DOM
-- **Animations**: Framer Motion
+- **Dashboard animations**: Framer Motion
 
 ## 📁 Project Structure
 
@@ -145,14 +146,14 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
+## Configuration
+
+Copy `.env.example` to `.env` and add a free NASA API key (https://api.nasa.gov) as `VITE_NASA_API_KEY`. Without it the app falls back to NASA's heavily rate-limited `DEMO_KEY`.
+
 ## How can I deploy this project?
 
-You can deploy this Vite app to platforms like Vercel or Netlify.
+This is a static Vite app. Build with `npm run build` and serve the `dist` folder.
 
-Example (Vercel):
-
-1. Push your repo to GitHub.
-2. Create a new project in Vercel and link your repository.
-3. Set the build command to `npm run build` and the output directory to `dist`.
-
-Netlify works similarly, connect the repo and use the same build settings.
+- **Vercel**: import the repo. `vercel.json` already rewrites all routes to `index.html` so client-side routes such as `/dashboard/iss` work on refresh.
+- **Netlify**: connect the repo with build command `npm run build` and publish directory `dist`. `public/_redirects` provides the same single-page fallback.
+- Add `VITE_NASA_API_KEY` as an environment variable on the host.

@@ -1,7 +1,8 @@
 // API Service for fetching space data from external APIs
 import type { IssPosition, SpaceWeatherData, ApodResponse, SpaceNewsResponse } from '@/types';
 
-const NASA_API_KEY = 'DEMO_KEY'; // Replace with your NASA API key for higher rate limits
+// Set VITE_NASA_API_KEY in .env for higher rate limits; DEMO_KEY works but is heavily throttled
+const NASA_API_KEY: string = import.meta.env.VITE_NASA_API_KEY || 'DEMO_KEY';
 
 // ISS Position API
 export async function fetchIssPosition(): Promise<IssPosition> {
@@ -289,7 +290,7 @@ export async function fetchGeomagneticStorms(): Promise<GeomagneticStorm[]> {
     
     const data = await response.json();
     
-    return data.map((storm: any) => ({
+    return (data as DonkiStorm[]).map((storm) => ({
       id: storm.gstID,
       startTime: storm.startTime,
       kpIndex: storm.allKpIndex?.[0]?.kpIndex || 5,
@@ -300,6 +301,23 @@ export async function fetchGeomagneticStorms(): Promise<GeomagneticStorm[]> {
     console.error('GST fetch error:', error);
     return [];
   }
+}
+
+// Raw NASA DONKI payloads (only the fields we read)
+interface DonkiStorm {
+  gstID: string;
+  startTime: string;
+  link: string;
+  allKpIndex?: { kpIndex: number; source: string }[];
+}
+
+interface DonkiFlare {
+  flrID: string;
+  beginTime: string;
+  peakTime: string;
+  endTime: string;
+  classType: string;
+  sourceLocation?: string;
 }
 
 // Solar Flare API (NASA DONKI)
@@ -325,7 +343,7 @@ export async function fetchSolarFlares(): Promise<SolarFlare[]> {
     
     const data = await response.json();
     
-    return data.slice(0, 10).map((flare: any) => ({
+    return (data as DonkiFlare[]).slice(0, 10).map((flare) => ({
       id: flare.flrID,
       beginTime: flare.beginTime,
       peakTime: flare.peakTime,

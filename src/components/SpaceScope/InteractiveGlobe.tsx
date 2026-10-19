@@ -1,404 +1,215 @@
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
-import {
-  MapPin,
-  Eye,
-  Clock,
-  Compass,
-  Bell,
-  Info,
-  Navigation,
-} from "lucide-react";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  useMap,
-  useMapEvents,
-} from "react-leaflet";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
+import { useEffect, useRef } from "react";
+import { gsap, prefersReducedMotion } from "./gsap";
+import SectionHead from "./SectionHead";
+import { Planet } from "./art/Planet";
+import { Moon, Satellite, Station } from "./art/Craft";
 
-// Fix for default marker icons in react-leaflet
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
-  iconUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
-  shadowUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
-});
+const CX = 300;
+const CY = 300;
+const DISC_R = 120;
 
-interface Region {
+interface Orbit {
   id: string;
-  name: string;
-  visibility: number;
-  localTime: string;
-  direction: string;
-  status: "visible" | "partial" | "hidden";
-  lat: number;
-  lng: number;
+  rx: number;
+  ry: number;
+  rot: number;
+  offset: number;
+  duration: number;
+  color: string;
 }
 
-const regions: Region[] = [
-  {
-    id: "na",
-    name: "North America",
-    visibility: 95,
-    localTime: "11:30 PM - 3:00 AM",
-    direction: "Northeast",
-    status: "visible",
-    lat: 40.7128,
-    lng: -74.006,
-  },
-  {
-    id: "eu",
-    name: "Europe",
-    visibility: 78,
-    localTime: "4:30 AM - 6:00 AM",
-    direction: "Northwest",
-    status: "partial",
-    lat: 52.52,
-    lng: 13.405,
-  },
-  {
-    id: "asia",
-    name: "Asia",
-    visibility: 45,
-    localTime: "8:30 PM - 10:00 PM",
-    direction: "North",
-    status: "partial",
-    lat: 35.6762,
-    lng: 139.6503,
-  },
-  {
-    id: "sa",
-    name: "South America",
-    visibility: 88,
-    localTime: "10:00 PM - 2:00 AM",
-    direction: "East",
-    status: "visible",
-    lat: -23.5505,
-    lng: -46.6333,
-  },
+const orbits: Orbit[] = [
+  { id: "iss", rx: 240, ry: 78, rot: -20, offset: 0.12, duration: 22, color: "#ff8fb8" },
+  { id: "sat", rx: 195, ry: 58, rot: 26, offset: 0.55, duration: 30, color: "#c9b6ff" },
+  { id: "moon", rx: 285, ry: 112, rot: 6, offset: 0.8, duration: 46, color: "#ffd9a0" },
 ];
 
-// Custom map event handler component
-const MapEventHandler = ({
-  onLocationClick,
-}: {
-  onLocationClick: (lat: number, lng: number) => void;
-}) => {
-  useMapEvents({
-    click: (e) => {
-      onLocationClick(e.latlng.lat, e.latlng.lng);
-    },
+/** Closed loop of points around a rotated ellipse, starting at `offset` (0..1) of a revolution. */
+const ellipsePoints = ({ rx, ry, rot, offset }: Orbit, n = 90) => {
+  const r = (rot * Math.PI) / 180;
+  return Array.from({ length: n + 1 }, (_, i) => {
+    const t = (offset + i / n) * Math.PI * 2;
+    const x = rx * Math.cos(t);
+    const y = ry * Math.sin(t);
+    return { x: CX + x * Math.cos(r) - y * Math.sin(r), y: CY + x * Math.sin(r) + y * Math.cos(r) };
   });
-  return null;
 };
 
-// Location finder component
-const LocationFinder = ({
-  onLocate,
-}: {
-  onLocate: (lat: number, lng: number) => void;
-}) => {
-  const map = useMap();
+const orbitPath = (o: Orbit) =>
+  ellipsePoints({ ...o, offset: 0 }, 120)
+    .map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(2)} ${p.y.toFixed(2)}`)
+    .join(" ") + " Z";
 
-  const handleLocate = () => {
-    map.locate({ setView: true, maxZoom: 10 });
-    map.on("locationfound", (e) => {
-      onLocate(e.latlng.lat, e.latlng.lng);
-    });
-  };
-
-  return (
-    <button
-      onClick={handleLocate}
-      className="absolute top-4 right-4 z-[1000] p-3 rounded-xl glass-card hover:bg-star-white/20 transition-colors"
-      title="Find my location"
-    >
-      <Navigation className="w-5 h-5 text-cosmic-glow" />
-    </button>
-  );
-};
+const regions = [
+  { name: "North America", pct: 95, when: "11:30 PM – 3:00 AM", dir: "NE" },
+  { name: "Europe", pct: 78, when: "4:30 AM – 6:00 AM", dir: "NW" },
+  { name: "Asia", pct: 62, when: "7:10 PM – 9:30 PM", dir: "SW" },
+  { name: "South America", pct: 41, when: "1:15 AM – 2:40 AM", dir: "N" },
+];
 
 const InteractiveGlobe = () => {
-  const ref = useRef<HTMLDivElement>(null);
-  const [selectedRegion, setSelectedRegion] = useState<Region | null>(null);
-  const [isHovering, setIsHovering] = useState<string | null>(null);
-  const [userLocation, setUserLocation] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(null);
-  const [mapKey, setMapKey] = useState(0);
+  const root = useRef<HTMLElement>(null);
+  const altRef = useRef<HTMLSpanElement>(null);
+  const velRef = useRef<HTMLSpanElement>(null);
+  const latRef = useRef<HTMLSpanElement>(null);
+  const lonRef = useRef<HTMLSpanElement>(null);
 
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-
-  const globeRotate = useTransform(scrollYProgress, [0, 1], [0, 30]);
-
-  // Handle location selection
-  const handleLocationClick = (lat: number, lng: number) => {
-    setUserLocation({ lat, lng });
-    // Find nearest region to the clicked location
-    const distances = regions.map((r) => ({
-      region: r,
-      distance: Math.sqrt(Math.pow(r.lat - lat, 2) + Math.pow(r.lng - lng, 2)),
-    }));
-    const nearest = distances.sort((a, b) => a.distance - b.distance)[0];
-    if (nearest) {
-      setSelectedRegion(nearest.region);
-    }
-  };
-
-  const handleLocate = (lat: number, lng: number) => {
-    setUserLocation({ lat, lng });
-    handleLocationClick(lat, lng);
-  };
-
-  // Force map re-render when component becomes visible
   useEffect(() => {
-    const timer = setTimeout(() => setMapKey((prev) => prev + 1), 100);
-    return () => clearTimeout(timer);
+    const el = root.current;
+    if (!el) return;
+    const reduced = prefersReducedMotion();
+
+    const ctx = gsap.context(() => {
+      orbits.forEach((o) => {
+        const sprite = el.querySelector<SVGGElement>(`[data-sprite="${o.id}"]`);
+        if (!sprite) return;
+        const place = (progress: number) => {
+          const t = progress * Math.PI * 2;
+          const x = gsap.getProperty(sprite, "x") as number;
+          const y = gsap.getProperty(sprite, "y") as number;
+          // Local y>0 is the near side of the orbit; hide the craft while it passes behind the planet
+          const r = (o.rot * Math.PI) / 180;
+          const behind = -(x - CX) * Math.sin(r) + (y - CY) * Math.cos(r) < 0;
+          const hidden = behind && Math.hypot(x - CX, y - CY) < DISC_R + 6;
+          sprite.style.opacity = hidden ? "0" : "1";
+
+          if (o.id === "iss") {
+            const lat = 51.6 * Math.sin(t + 0.4);
+            const lon = (((progress * 360 * 4.2) % 360) + 360) % 360 - 180;
+            if (latRef.current) latRef.current.textContent = `${Math.abs(lat).toFixed(2)}° ${lat >= 0 ? "N" : "S"}`;
+            if (lonRef.current) lonRef.current.textContent = `${Math.abs(lon).toFixed(2)}° ${lon >= 0 ? "E" : "W"}`;
+            if (altRef.current) altRef.current.textContent = (408 + 4 * Math.sin(t * 2)).toFixed(1);
+            if (velRef.current) velRef.current.textContent = (7.66 + 0.02 * Math.cos(t * 2)).toFixed(2);
+          }
+        };
+
+        if (reduced) {
+          gsap.set(sprite, { x: CX + o.rx * 0.7, y: CY + o.ry * 0.7 });
+          return;
+        }
+        const tw = gsap.to(sprite, {
+          motionPath: { path: el.querySelector<SVGPathElement>(`[data-orbit-path="${o.id}"]`)! },
+          duration: o.duration,
+          repeat: -1,
+          ease: "none",
+          onUpdate: () => place(tw.progress()),
+        });
+        tw.progress(o.offset);
+        place(o.offset);
+      });
+
+      if (reduced) return;
+
+      // Drifting planet + orbit rings intro
+      gsap.from("[data-orbit-ring]", {
+        opacity: 0, stagger: 0.12, duration: 1.4, ease: "power3.out",
+        scrollTrigger: { trigger: "[data-orbit-stage]", start: "top 80%", once: true },
+      });
+      gsap.from("[data-planet]", {
+        opacity: 0, duration: 1.6, ease: "power2.out",
+        scrollTrigger: { trigger: "[data-orbit-stage]", start: "top 80%", once: true },
+      });
+      gsap.to("[data-orbit-stage]", {
+        yPercent: -6, ease: "none",
+        scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: true },
+      });
+
+      // Visibility bars fill, numbers count
+      gsap.utils.toArray<HTMLElement>("[data-region]").forEach((row, i) => {
+        const bar = row.querySelector<HTMLElement>("[data-bar]");
+        const num = row.querySelector<HTMLElement>("[data-pct]");
+        const target = Number(row.dataset.region);
+        const st = { trigger: row, start: "top 90%", once: true };
+        gsap.from(row, { x: -40, opacity: 0, duration: 0.8, delay: i * 0.08, ease: "power3.out", scrollTrigger: st });
+        gsap.fromTo(bar, { width: "0%" }, { width: `${target}%`, duration: 1.6, delay: 0.2 + i * 0.08, ease: "power3.out", scrollTrigger: st });
+        const s = { v: 0 };
+        gsap.to(s, { v: target, duration: 1.6, delay: 0.2 + i * 0.08, ease: "power3.out", scrollTrigger: st, onUpdate: () => num && (num.textContent = `${Math.round(s.v)}%`) });
+      });
+    }, el);
+
+    return () => {
+      ctx.revert();
+    };
   }, []);
 
-  const getStatusColor = (status: Region["status"]) => {
-    switch (status) {
-      case "visible":
-        return "bg-green-500";
-      case "partial":
-        return "bg-amber-500";
-      case "hidden":
-        return "bg-gray-500";
-    }
-  };
-
   return (
-    <section
-      ref={ref}
-      className="relative min-h-screen py-20 md:py-32 overflow-hidden"
-    >
-      {/* Background (Removed gradient) */}
-      <div className="absolute inset-0" />
+    <section ref={root} id="orbit" className="relative z-10 overflow-hidden py-24 md:py-36">
+      <div className="mx-auto grid max-w-6xl items-center gap-14 px-6 lg:grid-cols-[1fr_1.05fr]">
+        <div>
+          <SectionHead
+            lines={["The whole sky,", <span key="a" className="l-grad-text">in real time.</span>]}
+            lead="Watch the ISS, communication satellites and the Moon trace their paths around Earth, and see which part of the planet has the best seat right now."
+          />
 
-      <div className="container mx-auto px-4">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cosmic-glow/10 border border-cosmic-glow/20 mb-4">
-            <MapPin className="w-4 h-4 text-cosmic-glow" />
-            <span className="text-sm text-cosmic-glow font-medium">
-              Personalized Tracking
-            </span>
-          </div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold mb-4">
-            <span className="text-star-white">Your Sky, </span>
-            <span className="text-gradient">Your Events</span>
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Every location sees space differently. SpaceScope adapts to your
-            position on Earth.
-          </p>
-        </motion.div>
-
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Interactive Map */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="relative aspect-[4/3] max-w-[600px] mx-auto w-full"
-          >
-            <div className="relative w-full h-full rounded-2xl overflow-hidden border border-cosmic-glow/30 shadow-2xl">
-              <MapContainer
-                key={mapKey}
-                center={[20, 0]}
-                zoom={2}
-                style={{ height: "100%", width: "100%", background: "#0a0e27" }}
-                zoomControl={false}
-                className="z-0"
-              >
-                <TileLayer
-                  url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                />
-                <MapEventHandler onLocationClick={handleLocationClick} />
-                <LocationFinder onLocate={handleLocate} />
-
-                {/* Region markers */}
-                {regions.map((region) => {
-                  const icon = L.divIcon({
-                    className: "custom-marker",
-                    html: `
-                      <div class="relative">
-                        <div class="w-5 h-5 rounded-full ${getStatusColor(region.status)} border-2 border-white shadow-lg animate-pulse"></div>
-                      </div>
-                    `,
-                    iconSize: [20, 20],
-                  });
-
-                  return (
-                    <Marker
-                      key={region.id}
-                      position={[region.lat, region.lng]}
-                      icon={icon}
-                      eventHandlers={{
-                        click: () => setSelectedRegion(region),
-                      }}
-                    >
-                      <Popup>
-                        <div className="text-sm">
-                          <strong className="text-cosmic-glow">
-                            {region.name}
-                          </strong>
-                          <div className="mt-1 text-xs">
-                            <div>Visibility: {region.visibility}%</div>
-                            <div>Best time: {region.localTime}</div>
-                            <div>Direction: {region.direction}</div>
-                          </div>
-                        </div>
-                      </Popup>
-                    </Marker>
-                  );
-                })}
-
-                {/* User location marker */}
-                {userLocation && (
-                  <Marker position={[userLocation.lat, userLocation.lng]}>
-                    <Popup>
-                      <div className="text-sm">
-                        <strong className="text-cosmic-glow">
-                          Your Location
-                        </strong>
-                        <div className="mt-1 text-xs">
-                          {userLocation.lat.toFixed(4)}°,{" "}
-                          {userLocation.lng.toFixed(4)}°
-                        </div>
-                      </div>
-                    </Popup>
-                  </Marker>
-                )}
-              </MapContainer>
-            </div>
-
-            {/* Map overlay instruction */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1 }}
-              className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[1000] px-4 py-2 rounded-full glass-card border border-cosmic-glow/30"
-            >
-              <p className="text-xs text-star-white/80">
-                Click on a region to see event visibility
-              </p>
-            </motion.div>
-          </motion.div>
-
-          {/* Info Card */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{
-              opacity: selectedRegion ? 1 : 0.5,
-              x: selectedRegion ? 0 : 20,
-            }}
-            transition={{ type: "spring", stiffness: 200, damping: 20 }}
-          >
-            <div className="glass-card p-6 md:p-8 border-glow">
-              {selectedRegion ? (
-                <>
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-2xl font-heading font-bold text-star-white">
-                      {selectedRegion.name}
-                    </h3>
-                    <div
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        selectedRegion.status === "visible"
-                          ? "bg-green-500/20 text-green-400"
-                          : "bg-amber-500/20 text-amber-400"
-                      }`}
-                    >
-                      {selectedRegion.visibility}% Visible
-                    </div>
+          <div className="mt-12">
+            {regions.map((r) => (
+              <div key={r.name} data-region={r.pct} className="l-rule py-5">
+                <div className="flex items-baseline justify-between gap-4">
+                  <div>
+                    <div className="font-heading text-lg font-semibold leading-tight">{r.name}</div>
+                    <div className="mt-1 text-xs text-[var(--l-mist)]/50">{r.when} � look {r.dir}</div>
                   </div>
-
-                  <div className="space-y-4 mb-6">
-                    <div className="flex items-center gap-4 p-3 rounded-xl bg-muted/50">
-                      <Clock className="w-5 h-5 text-cosmic-glow flex-shrink-0" />
-                      <div>
-                        <p className="text-sm text-muted-foreground">
-                          Best viewing time
-                        </p>
-                        <p className="text-star-white font-medium">
-                          {selectedRegion.localTime}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-4 p-3 rounded-xl bg-muted/50">
-                      <Compass className="w-5 h-5 text-cosmic-glow flex-shrink-0" />
-                      <div>
-                        <p className="text-sm text-muted-foreground">
-                          Look towards
-                        </p>
-                        <p className="text-star-white font-medium">
-                          {selectedRegion.direction}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-4 p-3 rounded-xl bg-muted/50">
-                      <Eye className="w-5 h-5 text-cosmic-glow flex-shrink-0" />
-                      <div>
-                        <p className="text-sm text-muted-foreground">
-                          Event visibility
-                        </p>
-                        <div className="w-full bg-muted rounded-full h-2 mt-1">
-                          <div
-                            className="h-2 rounded-full bg-gradient-cosmic"
-                            style={{ width: `${selectedRegion.visibility}%` }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <button className="btn-cosmic flex-1">
-                      <Eye className="w-4 h-4 mr-2" />
-                      AR View
-                    </button>
-                    <button className="btn-ghost-cosmic flex-1">
-                      <Bell className="w-4 h-4 mr-2" />
-                      Set Reminder
-                    </button>
-                  </div>
-
-                  <button className="mt-4 flex items-center gap-2 text-sm text-muted-foreground hover:text-cosmic-glow transition-colors">
-                    <Info className="w-4 h-4" />
-                    Why does visibility vary?
-                  </button>
-                </>
-              ) : (
-                <div className="text-center py-8">
-                  <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">
-                    Click on a region to see event visibility
-                  </p>
+                  <span data-pct className="font-heading text-2xl font-bold tabular-nums">0%</span>
                 </div>
-              )}
+                <div className="mt-3 h-px bg-white/10">
+                  <div data-bar className="h-[3px] -translate-y-px rounded-full bg-[var(--l-peach)]" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Orbit stage */}
+        <div data-orbit-stage className="relative mx-auto aspect-square w-full max-w-[640px]">
+          <svg viewBox="0 0 600 600" className="h-full w-full overflow-visible" role="img" aria-label="Animated diagram of the ISS, a satellite and the Moon orbiting a planet">
+            <defs>
+              <clipPath id="orbit-front">
+                <rect x="-100" y={CY} width="800" height="400" />
+              </clipPath>
+            </defs>
+
+            {/* Back half of each orbit */}
+            {orbits.map((o) => (
+              <g key={`b-${o.id}`} transform={`rotate(${o.rot} ${CX} ${CY})`}>
+                <ellipse data-orbit-ring cx={CX} cy={CY} rx={o.rx} ry={o.ry} fill="none" stroke={o.color} strokeOpacity="0.28" strokeDasharray="3 7" />
+              </g>
+            ))}
+
+            <g data-planet transform={`translate(${CX - 200} ${CY - 200})`}>
+              <Planet variant="violet" width={400} height={400} />
+            </g>
+
+            {/* Front half drawn over the planet */}
+            {orbits.map((o) => (
+              <g key={`f-${o.id}`} transform={`rotate(${o.rot} ${CX} ${CY})`}>
+                <g clipPath="url(#orbit-front)">
+                  <ellipse data-orbit-ring cx={CX} cy={CY} rx={o.rx} ry={o.ry} fill="none" stroke={o.color} strokeOpacity="0.85" strokeWidth="1.6" />
+                </g>
+              </g>
+            ))}
+
+            {orbits.map((o) => (
+              <path key={`p-${o.id}`} data-orbit-path={o.id} d={orbitPath(o)} fill="none" stroke="none" />
+            ))}
+
+            {/* Sprites: <g> at origin, moved by GSAP; inner offset centres the art */}
+            <g data-sprite="iss"><g transform="translate(-36 -16)"><Station width={72} height={33} /></g></g>
+            <g data-sprite="sat"><g transform="translate(-26 -12)"><Satellite width={52} height={23} /></g></g>
+            <g data-sprite="moon"><g transform="translate(-16 -16)"><Moon width={32} height={32} /></g></g>
+          </svg>
+
+          {/* Telemetry */}
+          <div className="absolute -bottom-4 left-0 w-[17.5rem] rounded-2xl border border-white/15 bg-[#0c0620]/85 p-5 sm:-left-4 lg:-left-10">
+            <div className="mb-3 flex items-center gap-2 text-[0.7rem] font-semibold uppercase tracking-widest text-[var(--l-lilac)]">
+              <span className="l-live-dot" /> ISS telemetry
             </div>
-          </motion.div>
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+              <div><dt className="text-[0.7rem] text-[var(--l-mist)]/50">Altitude</dt><dd className="font-heading text-lg font-semibold"><span ref={altRef}>408.0</span> <small className="text-xs font-normal text-[var(--l-mist)]/50">km</small></dd></div>
+              <div><dt className="text-[0.7rem] text-[var(--l-mist)]/50">Velocity</dt><dd className="font-heading text-lg font-semibold"><span ref={velRef}>7.66</span> <small className="text-xs font-normal text-[var(--l-mist)]/50">km/s</small></dd></div>
+              <div><dt className="text-[0.7rem] text-[var(--l-mist)]/50">Latitude</dt><dd className="font-heading font-semibold" ref={latRef}>0.00° N</dd></div>
+              <div><dt className="text-[0.7rem] text-[var(--l-mist)]/50">Longitude</dt><dd className="font-heading font-semibold" ref={lonRef}>0.00° E</dd></div>
+            </dl>
+          </div>
         </div>
       </div>
     </section>
