@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 import { gsap, prefersReducedMotion } from "./gsap";
 import SectionHead from "./SectionHead";
-import Magnet from "@/components/react-bits/Magnet";
 
 const tools = [
   {
@@ -68,12 +67,10 @@ const Toolkit = () => {
             lead="Everything you need to follow what is happening above you, built on public data from NASA, NOAA and ESA."
           />
           <div className="mt-10">
-            <Magnet padding={50} magnetStrength={4} maxOffset={14}>
               <Link to="/dashboard" className="l-btn l-btn-light">
                 Open the dashboard
                 <span className="l-btn-dot"><ArrowUpRight className="h-5 w-5" /></span>
               </Link>
-            </Magnet>
           </div>
         </div>
 

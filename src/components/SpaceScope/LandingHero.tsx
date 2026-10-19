@@ -2,7 +2,6 @@ import { useLayoutEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight, ChevronDown, Play } from "lucide-react";
 import { gsap, prefersReducedMotion } from "./gsap";
-import Magnet from "@/components/react-bits/Magnet";
 
 /**
  * Hero: the supplied scene image is the artwork; everything here is type and buttons
@@ -86,18 +85,14 @@ const LandingHero = () => {
         </p>
 
         <div data-hero-cta className="mt-8 flex flex-wrap items-center gap-3">
-          <Magnet padding={50} magnetStrength={4} maxOffset={14}>
             <Link to="/dashboard" className="l-btn l-btn-dark">
               Launch Dashboard
               <span className="l-btn-dot"><ArrowUpRight className="h-5 w-5" /></span>
             </Link>
-          </Magnet>
-          <Magnet padding={50} magnetStrength={4} maxOffset={14}>
             <a href="#features" className="l-btn l-btn-ghost">
               <span className="l-btn-dot"><Play className="h-4 w-4 fill-current" /></span>
               Explore features
             </a>
-          </Magnet>
         </div>
       </div>
 

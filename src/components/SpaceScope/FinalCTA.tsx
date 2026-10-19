@@ -4,7 +4,6 @@ import { ArrowUpRight } from "lucide-react";
 import { gsap, prefersReducedMotion } from "./gsap";
 import { Planet } from "./art/Planet";
 import { Rocket } from "./art/Craft";
-import Magnet from "@/components/react-bits/Magnet";
 import Aurora from "@/components/react-bits/Aurora";
 
 const FinalCTA = () => {
@@ -73,12 +72,10 @@ const FinalCTA = () => {
           Open the dashboard and see what is flying over your head right now. It is free, it is live, and it only takes a moment.
         </p>
         <div data-cta-fade className="mt-9 flex flex-wrap items-center justify-center gap-3">
-          <Magnet padding={50} magnetStrength={4} maxOffset={14}>
             <Link to="/dashboard" className="l-btn l-btn-light">
               Launch Dashboard
               <span className="l-btn-dot"><ArrowUpRight className="h-5 w-5" /></span>
             </Link>
-          </Magnet>
           <Link to="/dashboard/iss" className="l-btn rounded-full border border-white/25 px-7 py-3.5 text-[var(--l-cream)] hover:bg-white/10">
             Track the ISS
           </Link>
