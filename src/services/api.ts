@@ -195,36 +195,28 @@ export async function fetchApod(date?: string): Promise<ApodResponse> {
   };
 
 
-  const legacy = async (): Promise<ApodResponse | null> => {
-    const response = await request(nasaUrl('apod', { date }));
-    return response.ok ? ((await response.json()) as ApodResponse) : null;
-  };
-
-  // The legacy endpoint is archived on 2026-12-01; the new feed lists the latest 25 entries
-  const current = async (): Promise<ApodResponse | null> => {
+  // The legacy api.nasa.gov/planetary/apod endpoint now returns a "NASA Science" placeholder, so the
+  // science.nasa.gov feed (latest 25 entries, newest first) is the source. For image entries its `url`
+  // is the article page and `hdurl` is the actual picture. Video entries without a still are skipped.
+  try {
     const response = await request('https://science.nasa.gov/wp-json/wp/v2/apod-basic?per_page=25');
-    if (!response.ok) return null;
-    const entries: ApodBasic[] = await response.json();
-    const entry = date ? entries.find((e) => e.date === date) : entries[0];
-    if (!entry) return null;
-    return {
-      date: entry.date,
-      title: entry.title,
-      explanation: stripHtml(entry.explanation).replace(/^Explanation:\s*/i, ''),
-      url: entry.url,
-      hdurl: entry.hdurl,
-      media_type: entry.media_type === 'video' ? 'video' : 'image',
-      copyright: stripHtml(entry.copyright ?? entry.credit ?? '').replace(/^Image Credit:\s*/i, '') || undefined,
-    };
-  };
-
-  for (const source of [legacy, current]) {
-    try {
-      const result = await source();
-      if (result) return result;
-    } catch (error) {
-      console.warn('APOD source failed:', error);
+    if (response.ok) {
+      const entries: ApodBasic[] = await response.json();
+      const entry = date ? entries.find((e) => e.date === date) : entries.find((e) => e.hdurl);
+      if (entry?.hdurl) {
+        return {
+          date: entry.date,
+          title: entry.title,
+          explanation: stripHtml(entry.explanation).replace(/^Explanation:\s*/i, ''),
+          url: entry.hdurl,
+          hdurl: entry.hdurl,
+          media_type: 'image',
+          copyright: stripHtml(entry.copyright ?? entry.credit ?? '').replace(/^Image Credit:\s*/i, '') || undefined,
+        };
+      }
     }
+  } catch (error) {
+    console.warn('APOD fetch failed:', error);
   }
   return fallbackData;
 }
