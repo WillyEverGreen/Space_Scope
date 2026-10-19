@@ -147,7 +147,7 @@ const SpaceWeatherPage = () => {
             <span>Storm</span>
             <span>Severe</span>
           </div>
-          <div className="h-2 rounded-full bg-gradient-to-r from-green-500 via-amber-500 to-red-500 mt-2" />
+          <div className="h-2 rounded-full bg-linear-to-r from-green-500 via-amber-500 to-red-500 mt-2" />
         </motion.div>
 
         {/* Solar Wind Card */}

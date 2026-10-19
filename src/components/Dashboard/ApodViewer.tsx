@@ -92,7 +92,7 @@ const ApodViewer = () => {
               {/* Gradient Overlay */}
               {!imageError && (
                 <>
-                  <div className="absolute inset-0 bg-gradient-to-t from-space-deep via-transparent to-transparent opacity-80" />
+                  <div className="absolute inset-0 bg-linear-to-t from-space-deep via-transparent to-transparent opacity-80" />
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <span className="px-5 py-2.5 rounded-full glass-card text-sm font-medium text-star-white flex items-center gap-2">
                       <Sparkles className="w-4 h-4" />
@@ -172,7 +172,7 @@ const ApodViewer = () => {
               />
 
               {/* Info Footer */}
-              <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-space-deep to-transparent">
+              <div className="absolute bottom-0 left-0 right-0 p-6 bg-linear-to-t from-space-deep to-transparent">
                 <h4 className="font-heading text-xl text-star-white mb-2">{apod.title}</h4>
                 <p className="text-sm text-muted-foreground line-clamp-2">{apod.explanation}</p>
                 <a
